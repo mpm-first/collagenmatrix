@@ -1,0 +1,33 @@
+$theme-colors: (
+  "primary": blue,
+  "dark": #000000
+);
+
+@import "../../node_modules/bootstrap/scss/bootstrap";
+@import "pages/admin";
+@import "pages/homepage";
+@import "pages/signin";
+
+body {
+  padding-top:56px;
+}
+
+.navbar {
+  .logo {
+    max-width: 320px;
+    height: auto;
+  }
+  // border-bottom:1px solid #eee;
+}
+
+.footer {
+  // margin-top: 3rem;
+  position: absolute;
+  bottom: 0;
+  background: #777;
+
+  p {
+    text-align: right;
+    color: #fff;
+  }
+}

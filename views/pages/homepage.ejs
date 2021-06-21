@@ -1,0 +1,39 @@
+<div id="homepage" class="container" v-cloak>
+
+  <div class="row">
+    <div class="col-6 offset-3 mt-5 text-center">
+      <h1 class="mt-5">Patient Information Leaflet Search</h1>
+      <p class="lead center">Search by reference number (REF)</p>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-6 offset-3 mt-5">
+      <form id="search-form">
+        <div class="row">
+          <div class="col">
+            <div class="input-group">
+              <input class="form-control form-control-lg search-field" type="text" placeholder="" aria-label="search">
+              <button type="submit" class="btn btn-primary search-btn">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
+                  <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"></path>
+                </svg>
+                &nbsp;Search
+              </button>
+              <div id="validationServer03Feedback" class="invalid-feedback">
+                Please provide a valid REF #.
+              </div>
+            </div>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div><!-- /.row -->
+
+  <div class="row">
+    <div class="col text-center mt-5">
+      <p><img class="icon-manufacturing" src="/images/icon-manufacturing.svg">Collagen Matrix, Inc. 15 Thornton Road, Oakland, New Jersey 07436 USA</p>
+    </div>
+  </div>
+</div>
+<%- /* Expose locals as `window.SAILS_LOCALS` :: */ exposeLocalsToBrowser() %>

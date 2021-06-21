@@ -1,0 +1,227 @@
+<div id="welcome">
+
+  <account-notification-banner></account-notification-banner>
+
+  <div class="container pt-5 pb-5">
+
+    <div class="row mt-3" id="add">
+
+      <div class="col">
+        <!-- Button trigger modal -->
+        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#add-document">
+          Add Document
+        </button>
+
+        <!-- Add Document Modal -->
+        <div class="modal fade" id="add-document" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+          <div class="modal-dialog">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Add Document</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+              <div class="modal-body">
+                <form>
+                  <div class="input-group mb-3">
+                    <span class="input-group-text" id="input-name">Name</span>
+                    <input type="text" class="form-control" placeholder="" aria-label="Name" aria-describedby="basic-addon1">
+                  </div>
+                  <div class="input-group mb-3">
+                    <span class="input-group-text" id="input-ref">REF #(s) or Name</span>
+                    <input type="text" class="form-control" placeholder="" aria-label="Reference Number" aria-describedby="basic-addon1">
+                  </div>
+                  <div class="mb-3">
+                    <input class="form-control" type="file" id="formFile">
+                  </div>
+                </form>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary">Save</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col">
+        <form id="search-form">
+          <div class="row">
+            <div class="col">
+              <div class="input-group">
+                <input class="form-control form-control-lg search-field" type="text" placeholder="REF #" aria-label="search">
+                <button type="submit" class="btn btn-primary search-btn">Search</button>
+              </div>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <div class="row" id="documents">
+
+      <div class="col">
+
+        <table class="table mt-3">
+          <thead>
+            <tr>
+              <th scope="col">Name</th>
+              <th scope="col">REF #(s)</th>
+              <th scope="col">Edit</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><a href="http://localhost:3000/img/pdf/CDSLM-DMOPIL.pdf" target="_blank">DuraMatrix-Onlay</a></td>
+              <td>CDMPP3040,CDMPP4040</td>
+              <td><button type="button" class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#edit-document">Edit</button></td>
+            </tr>
+            <tr>
+              <td><a href="#">Lorem-Ipsum</a></td>
+              <td>TKTKT5055</td>
+              <td><button type="button" class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#edit-document">Edit</button></td>
+            </tr>
+            <tr>
+              <td><a href="#">Dolor-Sit-Amet</a></td>
+              <td>XPYYY3445,ZMPZZ9990,ZMPZZ9999</td>
+              <td><button type="button" class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#edit-document">Edit</button></td>
+            </tr>
+            <tr>
+              <td><a href="#">Consectetur-Adipiscing-Elit</a></td>
+              <td>YYYZZ12345,XYZAB09876</td>
+              <td><button type="button" class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#edit-document">Edit</button></td>
+            </tr>
+            <tr>
+              <td><a href="#">Vivamus-Ac</a></td>
+              <td>WYSIW07775</td>
+              <td><button type="button" class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#edit-document">Edit</button></td>
+            </tr>
+          </tbody>
+        </table>
+
+              <!-- Add Document Modal -->
+        <div class="modal fade" id="edit-document" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+          <div class="modal-dialog">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Edit Document</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+              <div class="modal-body">
+                <form>
+                  <div class="input-group mb-3">
+                    <span class="input-group-text" id="input-name">Name</span>
+                    <input type="text" class="form-control" placeholder="" aria-label="Name" aria-describedby="basic-addon1" value="DuraMatrix-Onlay">
+                  </div>
+                  <div class="input-group mb-3">
+                    <span class="input-group-text" id="input-ref">REF #(s)</span>
+                    <input type="text" class="form-control" placeholder="" aria-label="Reference Number" aria-describedby="basic-addon1" value="MC-4466-33,MX-4466-77">
+                  </div>
+                  <div class="mb-3">
+                    <input class="form-control" type="file" id="formFile">
+                  </div>
+                </form>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-warning">Delete</button>
+                <button type="button" class="btn btn-primary">Save</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+    
+  </div>
+
+  <router-view></router-view>
+
+  <!--  ╔═╗═╗ ╦╔═╗╔╦╗╔═╗╦  ╔═╗  ┌┬┐┌─┐┌┬┐┌─┐┬
+        ║╣ ╔╩╦╝╠═╣║║║╠═╝║  ║╣   ││││ │ ││├─┤│
+        ╚═╝╩ ╚═╩ ╩╩ ╩╩  ╩═╝╚═╝  ┴ ┴└─┘─┴┘┴ ┴┴─┘  -->
+<!--   <modal class="example-modal" v-if="modal==='example'" @close="closeExampleModal()" v-cloak>
+    <div class="modal-header">
+      <h2 class="modal-title">Example modal</h2>
+      <p class="modal-intro">At your leisure, please peruse this excerpt from a whale of a tale.</p>
+      <hr>
+    </div>
+    <div class="modal-body">
+      <h5 class="pb-2 mb-3 border-bottom">Chapter 1: Loomings.</h5>
+      <p>Call me Ishmael. Some years ago—never mind how long precisely—having little or no money in my purse, and nothing particular to interest me on shore, I thought I would sail about a little and see the watery part of the world. It is a way I have of driving off the spleen and regulating the circulation. Whenever I find myself growing grim about the mouth; whenever it is a damp, drizzly November in my soul; whenever I find myself involuntarily pausing before coffin warehouses, and bringing up the rear of every funeral I meet; and especially whenever my hypos get such an upper hand of me, that it requires a strong moral principle to prevent me from deliberately stepping into the street, and methodically knocking people's hats off—then, I account it high time to get to sea as soon as I can. This is my substitute for pistol and ball. With a philosophical flourish Cato throws himself upon his sword; I quietly take to the ship. There is nothing surprising in this. If they but knew it, almost all men in their degree, some time or other, cherish very nearly the same feelings towards the ocean with me.</p>
+      <div class="js-timestamp-examples">
+        <h5 class="pt-4 pb-2 mb-3 border-bottom">About 2 years ago</h5>
+        <p>
+          <js-timestamp :at="pageLoadedAt-(2*365*24*60*60*1000)"></js-timestamp><br/>
+          <js-timestamp :at="pageLoadedAt-(2*365*24*60*60*1000)" format="timeago" short="true"></js-timestamp><br/>
+          <js-timestamp :at="pageLoadedAt-(2*365*24*60*60*1000)" format="calendar"></js-timestamp><br/>
+        </p>
+        <h5 class="pt-4 pb-2 mb-3 border-bottom">About 2 months ago</h5>
+        <p>
+          <js-timestamp :at="pageLoadedAt-(2*30*24*60*60*1000)"></js-timestamp><br/>
+          <js-timestamp :at="pageLoadedAt-(2*30*24*60*60*1000)" format="timeago" short="true"></js-timestamp><br/>
+          <js-timestamp :at="pageLoadedAt-(2*30*24*60*60*1000)" format="calendar"></js-timestamp><br/>
+        </p>
+        <h5 class="pt-4 pb-2 mb-3 border-bottom">2 days ago</h5>
+        <p>
+          <js-timestamp :at="pageLoadedAt-(2*24*60*60*1000)"></js-timestamp><br/>
+          <js-timestamp :at="pageLoadedAt-(2*24*60*60*1000)" format="timeago" short="true"></js-timestamp><br/>
+          <js-timestamp :at="pageLoadedAt-(2*24*60*60*1000)" format="calendar"></js-timestamp><br/>
+        </p>
+        <h5 class="pt-4 pb-2 mb-3 border-bottom">2 hours ago</h5>
+        <p>
+          <js-timestamp :at="pageLoadedAt-(2*60*60*1000)"></js-timestamp><br/>
+          <js-timestamp :at="pageLoadedAt-(2*60*60*1000)" format="timeago" short="true"></js-timestamp><br/>
+          <js-timestamp :at="pageLoadedAt-(2*60*60*1000)" format="calendar"></js-timestamp><br/>
+        </p>
+        <h5 class="pt-4 pb-2 mb-3 border-bottom">15 minutes ago</h5>
+        <p>
+          <js-timestamp :at="pageLoadedAt-(15*60*1000)"></js-timestamp><br/>
+          <js-timestamp :at="pageLoadedAt-(15*60*1000)" format="timeago" short="true"></js-timestamp><br/>
+          <js-timestamp :at="pageLoadedAt-(15*60*1000)" format="calendar"></js-timestamp><br/>
+        </p>
+        <h5 class="pt-4 pb-2 mb-3 border-bottom">45 seconds ago</h5>
+        <p>
+          <js-timestamp :at="pageLoadedAt-(45*1000)"></js-timestamp><br/>
+          <js-timestamp :at="pageLoadedAt-(45*1000)" format="timeago" short="true"></js-timestamp><br/>
+          <js-timestamp :at="pageLoadedAt-(45*1000)" format="calendar"></js-timestamp><br/>
+        </p>
+        <h5 class="pt-4 pb-2 mb-3 border-bottom">Right now</h5>
+        <p>
+          <js-timestamp :at="pageLoadedAt"></js-timestamp><br/>
+          <js-timestamp :at="pageLoadedAt" format="timeago" short="true"></js-timestamp><br/>
+          <js-timestamp :at="pageLoadedAt" format="calendar"></js-timestamp><br/>
+        </p>
+        <h5 class="pt-4 pb-2 mb-3 border-bottom">In an hour</h5>
+        <p>
+          <js-timestamp :at="pageLoadedAt+(60*60*1000)"></js-timestamp><br/>
+          <js-timestamp :at="pageLoadedAt+(60*60*1000)" format="timeago" short="true"></js-timestamp><br/>
+          <js-timestamp :at="pageLoadedAt+(60*60*1000)" format="calendar"></js-timestamp><br/>
+        </p>
+        <h5 class="pt-4 pb-2 mb-3 border-bottom">In two days</h5>
+        <p>
+          <js-timestamp :at="pageLoadedAt+(2*24*60*60*1000)"></js-timestamp><br/>
+          <js-timestamp :at="pageLoadedAt+(2*24*60*60*1000)" format="timeago" short="true"></js-timestamp><br/>
+          <js-timestamp :at="pageLoadedAt+(2*24*60*60*1000)" format="calendar"></js-timestamp><br/>
+        </p>
+        <h5 class="pt-4 pb-2 mb-3 border-bottom">In about two months</h5>
+        <p>
+          <js-timestamp :at="pageLoadedAt+(2*30*24*60*60*1000)"></js-timestamp><br/>
+          <js-timestamp :at="pageLoadedAt+(2*30*24*60*60*1000)" format="timeago" short="true"></js-timestamp><br/>
+          <js-timestamp :at="pageLoadedAt+(2*30*24*60*60*1000)" format="calendar"></js-timestamp><br/>
+        </p>
+        <h5 class="pt-4 pb-2 mb-3 border-bottom">In about two years</h5>
+        <p>
+          <js-timestamp :at="pageLoadedAt+(2*365*24*60*60*1000)"></js-timestamp><br/>
+          <js-timestamp :at="pageLoadedAt+(2*365*24*60*60*1000)" format="timeago" short="true"></js-timestamp><br/>
+          <js-timestamp :at="pageLoadedAt+(2*365*24*60*60*1000)" format="calendar"></js-timestamp><br/>
+        </p>
+      </div>
+    </div>
+    <div class="modal-footer flex-row-reverse justify-content-between">
+      <button type="button" data-dismiss="modal" class="btn btn-info">Close</button>
+      <button type="button" data-dismiss="modal" class="btn btn-outline-info">Cancel</button>
+    </div>
+  </modal> -->
+</div>
+<%- /* Expose locals as `window.SAILS_LOCALS` :: */ exposeLocalsToBrowser() %>

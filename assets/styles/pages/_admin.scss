@@ -1,0 +1,14 @@
+#page-admin {
+
+  .table {
+
+    .btn {
+      opacity: 0;
+      transition: 150ms linear;
+    }
+
+    tr:hover .btn {
+      opacity: 1;
+    }
+  }
+}
