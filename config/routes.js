@@ -66,8 +66,8 @@ module.exports.routes = {
   'POST  /api/v1/deliver-contact-form-message':          { action: 'deliver-contact-form-message' },
   'POST  /api/v1/observe-my-session':                 { action: 'observe-my-session', hasSocketFeatures: true },
 
-  'POST  /api/v1/docs':                             { action: 'docs/upload-doc' },
-  'DELETE  /api/v1/docs/:id':                       { action: 'docs/destroy-one-doc' },
-  'PATCH /api/v1/docs/:id':                         { action: 'docs/update-one-doc', skipAssets: false }
+  'POST   /api/v1/docs':                             { action: 'docs/upload-doc' },
+  'DELETE /api/v1/docs/:id':                       { action: 'docs/destroy-one-doc' },
+  'PATCH  /api/v1/docs/:id':                         { action: 'docs/update-one-doc', skipAssets: false }
 
 };

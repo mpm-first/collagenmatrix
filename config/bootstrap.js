@@ -11,18 +11,18 @@
 
 module.exports.bootstrap = async function() {
 
-  sails.log('creating users');
+  // sails.log('creating users');
 
   // By convention, this is a good place to set up fake data during development.
-  var users = await User.createEach([
-    { emailAddress: 'chris@mpmfirst.com', fullName: 'Christopher McClellan', isSuperAdmin: true, password: await sails.helpers.passwords.hashPassword('abc123') },
-    { emailAddress: 'mgelefsky@collagenmatrix.com', fullName: 'Marc Gelefsky', password: await sails.helpers.passwords.hashPassword('abc123') },
-    { emailAddress: 'bmesser@collagenmatrix.com', fullName: 'Bill Messer', password: await sails.helpers.passwords.hashPassword('abc123') },
-    { emailAddress: 'kbarrientos@collagenmatrix.com', fullName: 'Kimberly Barrientos', password: await sails.helpers.passwords.hashPassword('abc123') },
-    { emailAddress: 'yreeves@collagenmatrix.com', fullName: 'Yvonne Reeves', password: await sails.helpers.passwords.hashPassword('abc123') }
-  ]).fetch();
+  // var users = await User.createEach([
+  //   { emailAddress: 'chris@mpmfirst.com', fullName: 'Christopher McClellan', isSuperAdmin: true, password: await sails.helpers.passwords.hashPassword('abc123') },
+  //   { emailAddress: 'mgelefsky@collagenmatrix.com', fullName: 'Marc Gelefsky', password: await sails.helpers.passwords.hashPassword('abc123') },
+  //   { emailAddress: 'bmesser@collagenmatrix.com', fullName: 'Bill Messer', password: await sails.helpers.passwords.hashPassword('abc123') },
+  //   { emailAddress: 'kbarrientos@collagenmatrix.com', fullName: 'Kimberly Barrientos', password: await sails.helpers.passwords.hashPassword('abc123') },
+  //   { emailAddress: 'yreeves@collagenmatrix.com', fullName: 'Yvonne Reeves', password: await sails.helpers.passwords.hashPassword('abc123') }
+  // ]).fetch();
 
-  sails.log(users);
+  // sails.log(users);
 
   // Import dependencies
   var path = require('path');
