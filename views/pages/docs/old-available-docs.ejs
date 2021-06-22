@@ -3,13 +3,14 @@
   <div class="container">
 
     <div class="page-header text-center">
-      <h1>Documents</h1>
+      <h1>Docs</h1>
+      <h2>Upload your own doc.</h2>
       <div class="header-buttons">
         <button class="btn btn-outline-primary" @click="clickAddButton()">Add a doc</button>
       </div>
     </div>
 
-  <!--   <div class="listings" v-if="docs.length > 0">
+    <div class="listings" v-if="docs.length > 0">
 
       <div class="card" :key="'doc'+doc.id" :class="[doc.owner.id === me.id ? 'mine' : '', doc.unavailable ? 'not-available' : '']" v-for="doc in docs">
         <div class="card-options dropdown" v-if="doc.borrowedBy && doc.owner.id === me.id">
@@ -33,7 +34,6 @@
       </div>
     </div>
     <div class="empty text-center" v-else><p>You have not uploaded any docs. <a href="/docs/new" @click="clickAddButton()">Add a doc</a> to get started!</p></div>
-   -->
   </div>
 
   <% /* "Upload doc" modal */ %>

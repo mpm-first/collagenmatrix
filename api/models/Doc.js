@@ -12,13 +12,13 @@ module.exports = {
     //  ╔═╗╦═╗╦╔╦╗╦╔╦╗╦╦  ╦╔═╗╔═╗
     //  ╠═╝╠╦╝║║║║║ ║ ║╚╗╔╝║╣ ╚═╗
     //  ╩  ╩╚═╩╩ ╩╩ ╩ ╩ ╚╝ ╚═╝╚═╝
-    imageUploadFd: {
+    fileUploadFd: {
       type: 'string',
       description: 'The Skipper file descriptor string uniquely identifying the uploaded image.',
       required: true
     },
 
-    imageUploadMime: {
+    fileUploadMime: {
       type: 'string',
       description: 'The MIME type for the uploaded image.',
       required: true
@@ -50,9 +50,7 @@ module.exports = {
     //  ╔═╗╔═╗╔═╗╔═╗╔═╗╦╔═╗╔╦╗╦╔═╗╔╗╔╔═╗
     //  ╠═╣╚═╗╚═╗║ ║║  ║╠═╣ ║ ║║ ║║║║╚═╗
     //  ╩ ╩╚═╝╚═╝╚═╝╚═╝╩╩ ╩ ╩ ╩╚═╝╝╚╝╚═╝
-    owner: { model: 'User', description: 'The user who uploaded this item.' },
-
-    borrowedBy: { model: 'User', description: 'The user who has requested to borrow this item.' },
+    owner: { model: 'User', description: 'The user who uploaded this item.' }
 
   },
 

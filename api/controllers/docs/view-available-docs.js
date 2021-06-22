@@ -20,15 +20,10 @@ module.exports = {
 
     var url = require('url');
 
-    // Get the list of docs this user can see.
-    var docs = await Doc.find({
-      or: [
-        // My docs:
-        { owner: this.req.me.id }
-      ]
-    })
-    .populate('owner')
-    .populate('borrowedBy');
+    // Get the list of all docs.
+    var docs = await Doc.find().populate('owner');
+
+    sails.log('docs', docs);
 
     _.each(docs, (doc)=> {
       doc.fileSrc = url.resolve(sails.config.custom.baseUrl, '/api/v1/docs/'+doc.id+'/doc');

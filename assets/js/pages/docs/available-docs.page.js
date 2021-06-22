@@ -1,10 +1,10 @@
-parasails.registerPage('available-things', {
+parasails.registerPage('available-docs', {
   //  ╦╔╗╔╦╔╦╗╦╔═╗╦    ╔═╗╔╦╗╔═╗╔╦╗╔═╗
   //  ║║║║║ ║ ║╠═╣║    ╚═╗ ║ ╠═╣ ║ ║╣
   //  ╩╝╚╝╩ ╩ ╩╩ ╩╩═╝  ╚═╝ ╩ ╩ ╩ ╩ ╚═╝
   data: {
 
-    things: [],
+    docs: [],
 
     // The "virtual" portion of the URL which is managed by this page script.
     virtualPageSlug: '',
@@ -18,7 +18,7 @@ parasails.registerPage('available-things', {
     },
 
     // Modals which aren't linkable:
-    confirmDeleteThingModalOpen: false,
+    confirmDeleteDocModalOpen: false,
 
     // For tracking client-side validation errors in our form.
     // > Has property set to `true` for each invalid property in `formData`.
@@ -35,7 +35,7 @@ parasails.registerPage('available-things', {
 
   virtualPages: true,
   html5HistoryMode: 'history',
-  virtualPagesRegExp: /^\/things\/?([^\/]+)?/,
+  virtualPagesRegExp: /^\/docs\/?([^\/]+)?/,
 
   //  ╦  ╦╔═╗╔═╗╔═╗╦ ╦╔═╗╦  ╔═╗
   //  ║  ║╠╣ ║╣ ║  ╚╦╝║  ║  ║╣
@@ -47,7 +47,8 @@ parasails.registerPage('available-things', {
   },
 
   mounted: function() {
-    this.$find('[data-toggle="tooltip"]').tooltip();
+    console.log(this);
+    // this.$find('[data-toggle="tooltip"]').tooltip();
   },
 
   //  ╦╔╗╔╔╦╗╔═╗╦═╗╔═╗╔═╗╔╦╗╦╔═╗╔╗╔╔═╗
@@ -86,11 +87,11 @@ parasails.registerPage('available-things', {
 
     clickAddButton: function() {
       // Open the modal.
-      this.goto('/things/new');
+      this.goto('/docs/new');
     },
 
-    closeUploadThingModal: function() {
-      this._clearUploadThingModal();
+    closeUploadDocModal: function() {
+      this._clearUploadDocModal();
     },
 
     handleParsingUploadDocForm: function() {
@@ -131,32 +132,33 @@ parasails.registerPage('available-things', {
     },
 
     changeFileInput: function(files) {
+
       if (files.length !== 1 && !this.uploadFormData.file) {
         throw new Error('Consistency violation: `changeFileInput` was somehow called with an empty array of files, or with more than one file in the array!  This should never happen unless there is already an uploaded file tracked.');
       }
+
       var selectedFile = files[0];
 
       // If you cancel from the native upload window when you already
       // have a photo tracked, then we just avast (return early).
       // In this case, we just leave whatever you had there before.
-      if (!selectedFile && this.uploadFormData.file) {
-        return;
-      }
+      if (!selectedFile && this.uploadFormData.file) return;
 
       this.uploadFormData.file = selectedFile;
 
       // Set up the file preview for the UI:
       var reader = new FileReader();
+
       reader.onload = (event)=>{
         this.uploadFormData.previewFileSrc = event.target.result;
 
         // Unbind this "onload" event.
         delete reader.onload;
       };
+
       // Clear out any error messages about not providing an image.
       this.formErrors.photo = false;
       reader.readAsDataURL(selectedFile);
-
     },
 
     clickDeleteDoc: function(docId) {
@@ -186,17 +188,6 @@ parasails.registerPage('available-things', {
       // Close the modal.
       this.selectedDoc = undefined;
       this.confirmDeleteDocModalOpen = false;
-    },
-
-    clickContactBorrower: function(thingId) {//eslint-disable-line no-unused-vars
-      // FUTURE: This is where we can add a modal
-      // with a space to write a message to the borrower of the item.
-    },
-
-    clickContactOwner: function(thingId) {//eslint-disable-line no-unused-vars
-      // FUTURE: This is where we can add a modal
-      // with a space to write a message to the owner of the item.
-    },
-
+    }
   }
 });
