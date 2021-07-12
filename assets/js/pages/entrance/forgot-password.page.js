@@ -3,6 +3,7 @@ parasails.registerPage('forgot-password', {
   //  ║║║║║ ║ ║╠═╣║    ╚═╗ ║ ╠═╣ ║ ║╣
   //  ╩╝╚╝╩ ╩ ╩╩ ╩╩═╝  ╚═╝ ╩ ╩ ╩ ╩ ╚═╝
   data: {
+
     // Main syncing/loading state for this page.
     syncing: false,
 
@@ -13,26 +14,23 @@ parasails.registerPage('forgot-password', {
     // > Has property set to `true` for each invalid property in `formData`.
     formErrors: { /* … */ },
 
-    // Form rules
-    formRules: {
-      emailAddress: {required: true, isEmail: true},
-    },
-
     // Server error state for the form
     cloudError: '',
 
     // Success state when form has been submitted
     cloudSuccess: false,
+
   },
 
   //  ╦  ╦╔═╗╔═╗╔═╗╦ ╦╔═╗╦  ╔═╗
   //  ║  ║╠╣ ║╣ ║  ╚╦╝║  ║  ║╣
   //  ╩═╝╩╚  ╚═╝╚═╝ ╩ ╚═╝╩═╝╚═╝
   beforeMount: function() {
-    //…
+    // Attach any initial data from the server.
+    _.extend(this, SAILS_LOCALS);
   },
-  mounted: async function() {
-    //…
+  mounted: function() {
+    this.$focus('[autofocus]');
   },
 
   //  ╦╔╗╔╔╦╗╔═╗╦═╗╔═╗╔═╗╔╦╗╦╔═╗╔╗╔╔═╗
@@ -40,7 +38,29 @@ parasails.registerPage('forgot-password', {
   //  ╩╝╚╝ ╩ ╚═╝╩╚═╩ ╩╚═╝ ╩ ╩╚═╝╝╚╝╚═╝
   methods: {
 
-    submittedForm: async function() {
+    handleParsingForm: function() {
+
+      // Clear out any pre-existing error messages.
+      this.formErrors = {};
+
+      var argins = this.formData;
+
+      // Validate email:
+      if(!argins.emailAddress) {
+        this.formErrors.emailAddress = true;
+      }
+
+      // If there were any issues, they've already now been communicated to the user,
+      // so simply return undefined.  (This signifies that the submission should be
+      // cancelled.)
+      if (Object.keys(this.formErrors).length > 0) {
+        return;
+      }
+
+      return argins;
+    },
+
+    submittedForm: function() {
       // If it worked, show the success message.
       this.cloudSuccess = true;
     },

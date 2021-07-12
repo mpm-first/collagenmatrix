@@ -23,8 +23,6 @@ module.exports = function(grunt) {
           'SailsSocket',
           'Promise',
           'File',
-          'FileList',
-          'FormData',
           'Location',
           'RttcRefPlaceholder',
         ],

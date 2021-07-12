@@ -12,24 +12,23 @@ module.exports = {
     success: {
       statusCode: 200,
       description: 'Requesting user is a guest, so show the public landing page.',
-      viewTemplatePath: 'pages/homepage'
+      viewTemplatePath: 'pages/homepage.ejs'
     },
 
     redirect: {
       responseType: 'redirect',
-      description: 'Requesting user is logged in, so redirect to the internal welcome page.'
+      description: 'Requesting user is logged in, so redirect to an internal page depending on that user\'s account status.'
     },
 
   },
 
 
-  fn: async function () {
+  fn: async function ({}) {
 
     if (this.req.me) {
-      throw {redirect:'/welcome'};
+      // Land on the 'things' page.
+      throw {redirect:'/things'};
     }
-
-    return {};
 
   }
 

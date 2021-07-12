@@ -40,11 +40,9 @@ module.exports = Object.assign({}, PRODUCTION_CONFIG, {
   sockets: Object.assign({}, PRODUCTION_CONFIG.sockets, {
 
     onlyAllowOrigins: [
+      'https://staging.ration.io',
+      'https://ration-staging.herokuapp.com',
       'http://localhost:1337',
-      // 'https://example-staging.herokuapp.com',
-      // 'http://example-staging.herokuapp.com',
-      // 'https://staging.example.com',
-      // 'http://staging.example.com',
     ],
     //--------------------------------------------------------------------------
     // /\  Hard-code a staging-only override for allowed origins.
@@ -69,9 +67,19 @@ module.exports = Object.assign({}, PRODUCTION_CONFIG, {
     //--------------------------------------------------------------------------
   }),
 
+  uploads: Object.assign({}, PRODUCTION_CONFIG.uploads, {
+    // adapter: 'skipper-disk'
+    //--------------------------------------------------------------------------
+    // /\  This just uploads files to the local server disk in staging.
+    // ||  Leave this commented out if you want to use the same solution in
+    // ||  staging as you are using in production.
+    // ||  (You should prbly also add an override for the S3 bucket in use, etc.)
+    //--------------------------------------------------------------------------
+  }),
+
   custom: Object.assign({}, PRODUCTION_CONFIG.custom, {
 
-    baseUrl: 'https://staging.example.com',
+    baseUrl: 'https://ration-staging.herokuapp.com',
     //--------------------------------------------------------------------------
     // /\  Hard-code the base URL where your staging environment is hosted.
     // ||  (or use system env var: `sails_custom__baseUrl`)
@@ -83,7 +91,7 @@ module.exports = Object.assign({}, PRODUCTION_CONFIG, {
     // ||  messages in staging (or use `sails_custom__internalEmailAddress`)
     //--------------------------------------------------------------------------
 
-    // sendgridSecret: 'SG.fake.3e0Bn0qSQVnwb1E4qNPz9JZP5vLZYqjh7sn8S93oSHU',
+    // mailgunSecret: 'key-sandbox_fake_bd32301385130a0bafe030c',
     // stripeSecret: 'sk_sandbox__fake_Nfgh82401348jaDa3lkZ0d9Hm',
     // stripePublishableKey: 'pk_sandbox__fake_fKd3mZJs1mlYrzWt7JQtkcRb',
     //--------------------------------------------------------------------------

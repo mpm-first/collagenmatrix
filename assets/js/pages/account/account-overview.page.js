@@ -3,25 +3,28 @@ parasails.registerPage('account-overview', {
   //  ║║║║║ ║ ║╠═╣║    ╚═╗ ║ ╠═╣ ║ ║╣
   //  ╩╝╚╝╩ ╩ ╩╩ ╩╩═╝  ╚═╝ ╩ ╩ ╩ ╩ ╚═╝
   data: {
+
+    me: { /* ... */ },
+
     isBillingEnabled: false,
 
     hasBillingCard: false,
 
     // Syncing/loading states for this page.
-    syncingOpenCheckout: false,
     syncingUpdateCard: false,
     syncingRemoveCard: false,
 
-    // For <ajax-form>
+    // Form data
     formData: { /* … */ },
-    formRules: { /* … */ },
-    formErrors: { /* … */ },
+
+    // Server error state for the form
     cloudError: '',
-    syncing: '',
 
-    // For <modal>:
-    modal: '',
+    // For the Stripe checkout window
+    checkoutHandler: undefined,
 
+    // For the confirmation modal:
+    removeCardModalVisible: false,
   },
 
   //  ╦  ╦╔═╗╔═╗╔═╗╦ ╦╔═╗╦  ╔═╗
@@ -29,9 +32,17 @@ parasails.registerPage('account-overview', {
   //  ╩═╝╩╚  ╚═╝╚═╝ ╩ ╚═╝╩═╝╚═╝
   beforeMount: function (){
     _.extend(this, window.SAILS_LOCALS);
-  },
-  mounted: async function() {
-    //…
+
+    this.isBillingEnabled = !!this.stripePublishableKey;
+
+    // Determine whether there is billing info for this user.
+    this.hasBillingCard = (
+      this.me.billingCardBrand &&
+      this.me.billingCardLast4 &&
+      this.me.billingCardExpMonth &&
+      this.me.billingCardExpYear
+    );
+
   },
 
   //  ╦╔╗╔╔╦╗╔═╗╦═╗╔═╗╔═╗╔╦╗╦╔═╗╔╗╔╔═╗
@@ -39,19 +50,70 @@ parasails.registerPage('account-overview', {
   //  ╩╝╚╝ ╩ ╚═╝╩╚═╩ ╩╚═╝ ╩ ╩╚═╝╝╚╝╚═╝
   methods: {
 
-    closeModal: async function() {
-      // Dismiss modal
-      this.modal = '';
-      await this._resetForms();
+    clickStripeCheckoutButton: async function() {
+
+      // Import utilities.
+      var openStripeCheckout = parasails.require('openStripeCheckout');
+
+      // Prevent double-posting if it's still loading.
+      if(this.syncingUpdateCard) { return; }
+
+      // Clear out error states.
+      this.cloudError = false;
+
+      // Open Stripe Checkout.
+      var billingCardInfo = await openStripeCheckout(this.stripePublishableKey, this.me.emailAddress);
+      if (!billingCardInfo) {
+        // (if the user canceled the dialog, avast)
+        return;
+      }
+
+      // Now that payment info has been successfully added, update the billing
+      // info for this user in our backend.
+      this.syncingUpdateCard = true;
+      await Cloud.updateBillingCard.with(billingCardInfo)
+      .tolerate(()=>{
+        this.cloudError = true;
+      });
+      this.syncingUpdateCard = false;
+
+      // Upon success, update billing info in the UI.
+      if (!this.cloudError) {
+        Object.assign(this.me, _.pick(billingCardInfo, ['billingCardLast4', 'billingCardBrand', 'billingCardExpMonth', 'billingCardExpYear']));
+        this.hasBillingCard = true;
+      }
     },
 
-    _resetForms: async function() {
-      this.cloudError = '';
-      this.formData = {};
-      this.formRules = {};
-      this.formErrors = {};
-      await this.forceRender();
-    }
+    clickRemoveCardButton: function() {
+      this.removeCardModalVisible = true;
+    },
+
+    closeRemoveCardModal: function() {
+      this.removeCardModalVisible = false;
+      this.cloudError = false;
+    },
+
+    submittedRemoveCardForm: function() {
+
+      // Update billing info on success.
+      this.me.billingCardLast4 = undefined;
+      this.me.billingCardBrand = undefined;
+      this.me.billingCardExpMonth = undefined;
+      this.me.billingCardExpYear = undefined;
+      this.hasBillingCard = false;
+
+      // Close the modal and clear it out.
+      this.closeRemoveCardModal();
+
+    },
+
+    handleParsingRemoveCardForm: function() {
+      return {
+        // Set to empty string to indicate the default payment source
+        // for this customer is being completely removed.
+        stripeToken: ''
+      };
+    },
 
   }
 });

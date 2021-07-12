@@ -4,12 +4,11 @@
  * A button with a built-in loading spinner.
  *
  * @type {Component}
- *
- * @event click   [emitted when clicked]
  * -----------------------------------------------------------------------------
  */
 
 parasails.registerComponent('ajaxButton', {
+
   //  ╔═╗╦═╗╔═╗╔═╗╔═╗
   //  ╠═╝╠╦╝║ ║╠═╝╚═╗
   //  ╩  ╩╚═╚═╝╩  ╚═╝
@@ -22,7 +21,7 @@ parasails.registerComponent('ajaxButton', {
   //  ╩╝╚╝╩ ╩ ╩╩ ╩╩═╝  ╚═╝ ╩ ╩ ╩ ╩ ╚═╝
   data: function (){
     return {
-      //…
+
     };
   },
 
@@ -30,14 +29,14 @@ parasails.registerComponent('ajaxButton', {
   //  ╠═╣ ║ ║║║║
   //  ╩ ╩ ╩ ╩ ╩╩═╝
   template: `
-  <button @click="click()" type="submit" class="btn ajax-button" :class="[syncing ? 'syncing' : '']">
+  <button type="submit" class="btn ajax-button" :class="[syncing ? 'syncing' : '']">
     <span class="button-text" v-if="!syncing"><slot name="default">Submit</slot></span>
     <span class="button-loader clearfix" v-if="syncing">
       <slot name="syncing-state">
-        <span style="top: -4px; font-size: 12px; margin: 0 2px;" class="loading-dot dot1 position-relative"><small><span class="fa fa-circle"></span></small></span>
-        <span style="top: -4px; font-size: 12px; margin: 0 2px;" class="loading-dot dot2 position-relative"><small><span class="fa fa-circle"></span></small></span>
-        <span style="top: -4px; font-size: 12px; margin: 0 2px;" class="loading-dot dot3 position-relative"><small><span class="fa fa-circle"></span></small></span>
-        <span style="top: -4px; font-size: 12px; margin: 0 2px;" class="loading-dot dot4 position-relative"><small><span class="fa fa-circle"></span></small></span>
+        <div class="loading-dot dot1"></div>
+        <div class="loading-dot dot2"></div>
+        <div class="loading-dot dot3"></div>
+        <div class="loading-dot dot4"></div>
       </slot>
     </span>
   </button>
@@ -47,13 +46,15 @@ parasails.registerComponent('ajaxButton', {
   //  ║  ║╠╣ ║╣ ║  ╚╦╝║  ║  ║╣
   //  ╩═╝╩╚  ╚═╝╚═╝ ╩ ╚═╝╩═╝╚═╝
   beforeMount: function() {
-    //…
+
   },
-  mounted: async function(){
-    //…
+
+  mounted: function (){
+
   },
+
   beforeDestroy: function() {
-    //…
+
   },
 
   //  ╦╔╗╔╔╦╗╔═╗╦═╗╔═╗╔═╗╔╦╗╦╔═╗╔╗╔╔═╗
@@ -61,9 +62,6 @@ parasails.registerComponent('ajaxButton', {
   //  ╩╝╚╝ ╩ ╚═╝╩╚═╩ ╩╚═╝ ╩ ╩╚═╝╝╚╝╚═╝
   methods: {
 
-    click: async function(){
-      this.$emit('click');
-    },
-
   }
+
 });

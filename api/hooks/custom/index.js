@@ -1,5 +1,7 @@
 /**
- * @description :: The conventional "custom" hook.  Extends this app with custom server-start-time and request-time logic.
+ * custom hook
+ *
+ * @description :: A hook definition.  Extends Sails by adding shadow routes, implicit actions, and/or initialization logic.
  * @docs        :: https://sailsjs.com/docs/concepts/extending-sails/hooks
  */
 
@@ -12,17 +14,17 @@ module.exports = function defineCustomHook(sails) {
      */
     initialize: async function () {
 
-      sails.log.info('Initializing project hook... (`api/hooks/custom/`)');
+      sails.log.info('Initializing hook... (`api/hooks/custom`)');
 
-      // Check Stripe/Sendgrid configuration (for billing and emails).
+      // Check Stripe/Mailgun configuration (for billing and emails).
       var IMPORTANT_STRIPE_CONFIG = ['stripeSecret', 'stripePublishableKey'];
-      var IMPORTANT_SENDGRID_CONFIG = ['sendgridSecret', 'internalEmailAddress'];
+      var IMPORTANT_MAILGUN_CONFIG = ['mailgunSecret', 'mailgunDomain', 'internalEmailAddress'];
       var isMissingStripeConfig = _.difference(IMPORTANT_STRIPE_CONFIG, Object.keys(sails.config.custom)).length > 0;
-      var isMissingSendgridConfig = _.difference(IMPORTANT_SENDGRID_CONFIG, Object.keys(sails.config.custom)).length > 0;
+      var isMissingMailgunConfig = _.difference(IMPORTANT_MAILGUN_CONFIG, Object.keys(sails.config.custom)).length > 0;
 
-      if (isMissingStripeConfig || isMissingSendgridConfig) {
+      if (isMissingStripeConfig || isMissingMailgunConfig) {
 
-        let missingFeatureText = isMissingStripeConfig && isMissingSendgridConfig ? 'billing and email' : isMissingStripeConfig ? 'billing' : 'email';
+        let missingFeatureText = isMissingStripeConfig && isMissingMailgunConfig ? 'billing and email' : isMissingStripeConfig ? 'billing' : 'email';
         let suffix = '';
         if (_.contains(['silly'], sails.config.log.level)) {
           suffix =
@@ -41,8 +43,17 @@ module.exports = function defineCustomHook(sails) {
         }
 
         let problems = [];
-        if (sails.config.custom.sendgridSecret === undefined) {
-          problems.push('No `sails.config.custom.sendgridSecret` was configured.');
+        if (sails.config.custom.stripeSecret === undefined) {
+          problems.push('No `sails.config.custom.stripeSecret` was configured.');
+        }
+        if (sails.config.custom.stripePublishableKey === undefined) {
+          problems.push('No `sails.config.custom.stripePublishableKey` was configured.');
+        }
+        if (sails.config.custom.mailgunSecret === undefined) {
+          problems.push('No `sails.config.custom.mailgunSecret` was configured.');
+        }
+        if (sails.config.custom.mailgunDomain === undefined) {
+          problems.push('No `sails.config.custom.mailgunDomain` was configured.');
         }
         if (sails.config.custom.internalEmailAddress === undefined) {
           problems.push('No `sails.config.custom.internalEmailAddress` was configured.');
@@ -62,14 +73,19 @@ will be disabled and/or hidden in the UI.
 
       // Set an additional config keys based on whether Stripe config is available.
       // This will determine whether or not to enable various billing features.
-      // sails.config.custom.enableBillingFeatures = !isMissingStripeConfig;
+      sails.config.custom.enableBillingFeatures = !isMissingStripeConfig;
 
       // After "sails-hook-organics" finishes initializing, configure Stripe
-      // and Sendgrid packs with any available credentials.
+      // and Mailgun packs with any available credentials.
       sails.after('hook:organics:loaded', ()=>{
 
-        sails.helpers.sendgrid.configure({
-          secret: sails.config.custom.sendgridSecret,
+        sails.helpers.stripe.configure({
+          secret: sails.config.custom.stripeSecret
+        });
+
+        sails.helpers.mailgun.configure({
+          secret: sails.config.custom.mailgunSecret,
+          domain: sails.config.custom.mailgunDomain,
           from: sails.config.custom.fromEmailAddress,
           fromName: sails.config.custom.fromName,
         });
@@ -205,7 +221,11 @@ will be disabled and/or hidden in the UI.
 
               // Exclude any fields corresponding with attributes that have `protect: true`.
               var sanitizedUser = _.extend({}, loggedInUser);
-              sails.helpers.redactUser(sanitizedUser);
+              for (let attrName in User.attributes) {
+                if (User.attributes[attrName].protect) {
+                  delete sanitizedUser[attrName];
+                }
+              }//∞
 
               // If there is still a "password" in sanitized user data, then delete it just to be safe.
               // (But also log a warning so this isn't hopelessly confusing.)

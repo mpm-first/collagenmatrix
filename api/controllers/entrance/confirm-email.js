@@ -46,15 +46,15 @@ then redirect to either a special landing page (for newly-signed up users), or t
   },
 
 
-  fn: async function ({token}) {
+  fn: async function (inputs) {
 
     // If no token was provided, this is automatically invalid.
-    if (!token) {
+    if (!inputs.token) {
       throw 'invalidOrExpiredToken';
     }
 
     // Get the user with the matching email token.
-    var user = await User.findOne({ emailProofToken: token });
+    var user = await User.findOne({ emailProofToken: inputs.token });
 
     // If no such user exists, or their token is expired, bail.
     if (!user || user.emailProofTokenExpiresAt <= Date.now()) {
@@ -75,12 +75,6 @@ then redirect to either a special landing page (for newly-signed up users), or t
         emailProofTokenExpiresAt: 0
       });
       this.req.session.userId = user.id;
-
-      // In case there was an existing session, broadcast a message that we can
-      // display in other open tabs.
-      if (sails.hooks.sockets) {
-        await sails.helpers.broadcastSessionChange(this.req);
-      }
 
       if (this.req.wantsJSON) {
         return;
@@ -112,18 +106,18 @@ then redirect to either a special landing page (for newly-signed up users), or t
       // > then one will be set up implicitly, so we'll need to persist it to our
       // > database.  (This could happen if Stripe credentials were not configured
       // > at the time this user was originally created.)
-      // if(sails.config.custom.enableBillingFeatures) {
-      //   let didNotAlreadyHaveCustomerId = (! user.stripeCustomerId);
-      //   let stripeCustomerId = await sails.helpers.stripe.saveBillingInfo.with({
-      //     stripeCustomerId: user.stripeCustomerId,
-      //     emailAddress: user.emailChangeCandidate
-      //   }).timeout(5000).retry();
-      //   if (didNotAlreadyHaveCustomerId){
-      //     await User.updateOne({ id: user.id }).set({
-      //       stripeCustomerId
-      //     });
-      //   }
-      // }
+      if(sails.config.custom.enableBillingFeatures) {
+        let didNotAlreadyHaveCustomerId = (! user.stripeCustomerId);
+        let stripeCustomerId = await sails.helpers.stripe.saveBillingInfo.with({
+          stripeCustomerId: user.stripeCustomerId,
+          emailAddress: user.emailChangeCandidate
+        }).timeout(5000).retry();
+        if (didNotAlreadyHaveCustomerId){
+          await User.updateOne({ id: user.id }).set({
+            stripeCustomerId
+          });
+        }
+      }
 
       // Finally update the user in the database, store their id in the session
       // (just in case they aren't logged in already), then redirect them to
@@ -137,13 +131,6 @@ then redirect to either a special landing page (for newly-signed up users), or t
         emailChangeCandidate: '',
       });
       this.req.session.userId = user.id;
-
-      // In case there was an existing session, broadcast a message that we can
-      // display in other open tabs.
-      if (sails.hooks.sockets) {
-        await sails.helpers.broadcastSessionChange(this.req);
-      }
-
       if (this.req.wantsJSON) {
         return;
       } else {
@@ -155,6 +142,5 @@ then redirect to either a special landing page (for newly-signed up users), or t
     }
 
   }
-
 
 };

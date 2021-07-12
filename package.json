@@ -1,27 +1,32 @@
 {
-  "name": "collagenmatrix",
+  "name": "ration",
   "private": true,
-  "version": "0.0.0",
+  "version": "0.0.57",
   "description": "a Sails application",
   "keywords": [],
   "dependencies": {
     "@sailshq/connect-redis": "^3.2.1",
     "@sailshq/lodash": "^3.10.3",
     "@sailshq/socket.io-redis": "^5.2.0",
-    "sails": "^1.4.3",
-    "sails-hook-apianalytics": "^2.0.3",
-    "sails-hook-organics": "^2.0.0",
-    "sails-hook-orm": "^3.0.2",
-    "sails-hook-sockets": "^2.0.0"
+    "async": "2.0.1",
+    "moment": "^2.19.3",
+    "sails": "^1.1.0",
+    "sails-hook-apianalytics": "^2.0.0",
+    "sails-hook-organics": "^0.16.0",
+    "sails-hook-orm": "^2.1.1",
+    "sails-hook-sockets": "^1.5.5",
+    "sails-hook-uploads": "^0.3.1",
+    "sails-mysql": "^1.0.1",
+    "skipper-s3": "^0.6.0-7"
   },
   "devDependencies": {
-    "bootstrap": "5.0.1",
     "eslint": "5.16.0",
     "grunt": "1.0.4",
-    "grunt-contrib-sass": "2.0.0",
+    "grunt-contrib-sass": "^2.0.0",
+    "grunt-sync": "0.8.2",
     "htmlhint": "0.11.0",
     "lesshint": "6.3.6",
-    "sails-hook-grunt": "^4.0.0"
+    "sails-hook-grunt": "^3.1.0"
   },
   "scripts": {
     "start": "NODE_ENV=production node app.js",
@@ -33,11 +38,11 @@
   "main": "app.js",
   "repository": {
     "type": "git",
-    "url": "git://github.com/chris/collagenmatrix.git"
+    "url": "git://github.com/shawrizard/ration-2.git"
   },
-  "author": "chris",
-  "license": "",
+  "author": "Rachael Shaw and Mike McNeil",
+  "license": "MIT",
   "engines": {
-    "node": "^14.17"
+    "node": "8"
   }
 }

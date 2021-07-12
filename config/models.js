@@ -18,7 +18,7 @@ module.exports.models = {
 
   /***************************************************************************
   *                                                                          *
-  * Whether model methods like `.create()` and `.update()` should ignore     *
+  * Whether the `.create()` and `.update()` model methods should ignore      *
   * (and refuse to persist) unrecognized data-- i.e. properties other than   *
   * those explicitly defined by attributes in the model definition.          *
   *                                                                          *
@@ -79,9 +79,6 @@ module.exports.models = {
     // ```
     // id: { type: 'string', columnName: '_id' },
     // ```
-    //
-    // Plus, don't forget to configure MongoDB as your default datastore:
-    // https://sailsjs.com/docs/tutorials/using-mongo-db
     //--------------------------------------------------------------------------
   },
 
@@ -101,7 +98,7 @@ module.exports.models = {
   ******************************************************************************/
 
   dataEncryptionKeys: {
-    default: 'ENn+Eb6lJkGw95HadDkOxGg6QlMgsXJna5Ww+X/ljxY='
+    default: 'AIq92jtjToWhv9vwzo+xjAwlCBFEWrmGeyYo9Dr8Pq4='
   },
 
 

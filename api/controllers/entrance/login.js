@@ -69,13 +69,13 @@ and exposed as \`req.me\`.)`
   },
 
 
-  fn: async function ({emailAddress, password, rememberMe}) {
+  fn: async function (inputs) {
 
     // Look up by the email address.
     // (note that we lowercase it to ensure the lookup is always case-insensitive,
     // regardless of which database we're using)
     var userRecord = await User.findOne({
-      emailAddress: emailAddress.toLowerCase(),
+      emailAddress: inputs.emailAddress.toLowerCase(),
     });
 
     // If there was no matching user, respond thru the "badCombo" exit.
@@ -84,7 +84,7 @@ and exposed as \`req.me\`.)`
     }
 
     // If the password doesn't match, then also exit thru "badCombo".
-    await sails.helpers.passwords.checkPassword(password, userRecord.password)
+    await sails.helpers.passwords.checkPassword(inputs.password, userRecord.password)
     .intercept('incorrect', 'badCombo');
 
     // If "Remember Me" was enabled, then keep the session alive for
@@ -92,7 +92,7 @@ and exposed as \`req.me\`.)`
     // response header to be sent as the result of this request -- thus
     // we must be dealing with a traditional HTTP request in order for
     // this to work.)
-    if (rememberMe) {
+    if (inputs.rememberMe) {
       if (this.req.isSocket) {
         sails.log.warn(
           'Received `rememberMe: true` from a virtual request, but it was ignored\n'+
@@ -107,12 +107,6 @@ and exposed as \`req.me\`.)`
     // Modify the active session instance.
     // (This will be persisted when the response is sent.)
     this.req.session.userId = userRecord.id;
-
-    // In case there was an existing session (e.g. if we allow users to go to the login page
-    // when they're already logged in), broadcast a message that we can display in other open tabs.
-    if (sails.hooks.sockets) {
-      await sails.helpers.broadcastSessionChange(this.req);
-    }
 
   }
 

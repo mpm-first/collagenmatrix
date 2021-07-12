@@ -1,20 +1,10 @@
 /**
  * cloud.js
- * (high-level AJAX library)
+ * v1.0.1
  *
- * > This is now part of `parasails`.  It was branched from the old "Cloud SDK"
- * > library at its v1.0.1 -- but from that point on, its versioning has been
- * > tied to the version of parasails it's bundled in.  (All future development
- * > of Cloud SDK will be as part of parasails.)
- *
- * Copyright (c) 2014-present, Mike McNeil
+ * Copyright (c) 2015-2017, Mike McNeil, Scott Gress, Sails Co. (https://sailsjs.com/about)
+ * Copyright (c) 2014, Mike McNeil, Balderdash Design Co. (http://balderdash.co)
  * MIT License
- *
- * - https://twitter.com/mikermcneil
- * - https://sailsjs.com/about
- * - https://sailsjs.com/support
- * - https://www.npmjs.com/package/parasails
- *
  * ---------------------------------------------------------------------------------------------
  * ## Basic Usage
  *
@@ -28,57 +18,135 @@
  * Step 2:
  *
  * ```
- * var result = await Cloud.doSomething(8);
- * ```
- *
- * Or:
- * ```
- * var result = await Cloud.doSomething.with({id: 8, foo: ['bar', 'baz']});
+ * var result = await Cloud.doSomething({id: 8, foo: ['bar', 'baz']});
  * ```
  * ---------------------------------------------------------------------------------------------
  */
-(function(factory, exposeUMD){
-  exposeUMD(this, factory);
-})(function (_, io, $, SAILS_LOCALS, location, File, FileList, FormData){
+(function(global, factory){
+  var _;
+  var io;
+  var $;
+  var SAILS_LOCALS;
+  var location;
+  var File;
+  var FormData;
 
-  //  ██████╗ ██████╗ ██╗██╗   ██╗ █████╗ ████████╗███████╗
-  //  ██╔══██╗██╔══██╗██║██║   ██║██╔══██╗╚══██╔══╝██╔════╝
-  //  ██████╔╝██████╔╝██║██║   ██║███████║   ██║   █████╗
-  //  ██╔═══╝ ██╔══██╗██║╚██╗ ██╔╝██╔══██║   ██║   ██╔══╝
-  //  ██║     ██║  ██║██║ ╚████╔╝ ██║  ██║   ██║   ███████╗
-  //  ╚═╝     ╚═╝  ╚═╝╚═╝  ╚═══╝  ╚═╝  ╚═╝   ╚═╝   ╚══════╝
-  //
-  //  ██╗   ██╗████████╗██╗██╗     ███████╗
-  //  ██║   ██║╚══██╔══╝██║██║     ██╔════╝
-  //  ██║   ██║   ██║   ██║██║     ███████╗
-  //  ██║   ██║   ██║   ██║██║     ╚════██║
-  //  ╚██████╔╝   ██║   ██║███████╗███████║
-  //   ╚═════╝    ╚═╝   ╚═╝╚══════╝╚══════╝
-  // Module utilities (private)
+  // First, handle optional deps that are gleaned from the global state:
+  // > Note: Instead of throwing, we ignore invalid globals.
+  // > (Remember the bug w/ the File global that happened in Socket.io
+  // > back in ~2015!)
+  // =====================================================================
+  if (global.location !== undefined) {
+    if (global.location && typeof global.location === 'object' && (global.location.constructor.name === 'Location' || global.location.constructor.toString() === '[object Location]')) {
+      location = global.location;
+    }
+  }//ﬁ
+  if (global.File !== undefined) {
+    if (global.File && typeof global.File === 'function' && global.File.name === 'File') {
+      File = global.File;
+    }
+  }//ﬁ
+  if (global.FormData !== undefined) {
+    if (global.FormData && typeof global.FormData === 'function' && global.FormData.name === 'FormData') {
+      FormData = global.FormData;
+    }
+  }//ﬁ
 
+  // Then, load the rest of the deps:
+  // =====================================================================
 
-  /**
-   * @param  {Ref} that
-   *
-   * @throws {Error} If that is not a File instance, a FileList instance, an
-   *                 array of File instances, a special File wrapper, or an
-   *                 array of special File wrappers.  (Note that, if an array is
-   *                 provided, this function will only return true if the array
-   *                 consists of ≥1 item.)
-   */
-  function _representsOneOrMoreFiles(that) {
-    // FUTURE: add support for Blobs
-    return (
-      _.isObject(that) &&
-      (
-        (File? that instanceof File : false)||
-        (FileList? that instanceof FileList : false)||
-        (_.isArray(that) && that.length > 0 && _.all(that, function(item) { return File? _.isObject(item) && item instanceof File : false; }))||
-        (File? _.isObject(that) && _.isObject(that.file) && that.file instanceof File : false)||
-        (_.isArray(that) && that.length > 0 && _.all(that, function(item) { return File? _.isObject(item) && _.isObject(item.file) && item.file instanceof File : false; }))
-      )
-    );
-  }//ƒ
+  //˙°˚°·.
+  //‡CJS  ˚°˚°·˛
+  if (typeof exports === 'object' && typeof module !== 'undefined') {
+    var _require = require;// eslint-disable-line no-undef
+    var _module = module;// eslint-disable-line no-undef
+    // required deps:
+    if (typeof _ === 'undefined') {
+      try {
+        _ = _require('@sailshq/lodash');
+      } catch (e) { if (e.code === 'MODULE_NOT_FOUND') {/* ok */} else { throw e; } }
+    }//ﬁ
+    if (typeof _ === 'undefined') {
+      try {
+        _ = _require('lodash');
+      } catch (e) { if (e.code === 'MODULE_NOT_FOUND') {/* ok */} else { throw e; } }
+    }//ﬁ
+
+    // optional deps:
+    try { $ = _require('jquery'); } catch (e) { if (e.code === 'MODULE_NOT_FOUND') {/* ok */} else { throw e; } }
+    try {
+
+      io = _require('socket.io-client');
+      var sailsIO = _require('sails.io.js');
+
+      // Instantiate the library (and start auto-connecting)
+      io = sailsIO(io);
+
+      // Disable logging
+      io.sails.environment = 'production';
+
+      // Note that, if there is no location global, then after one tick,
+      // if `io.sails.url` has still not been set, weird errors will emerge.
+      // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+      // FUTURE: figure out a way to provide a better err msg about this--
+      // i.e. specifically the case where `.setup()` isn't called within one tick.
+      // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+    } catch (e) { if (e.code === 'MODULE_NOT_FOUND') {/* ok */} else { throw e; } }
+
+    SAILS_LOCALS = undefined;
+
+    // export:
+    _module.exports = factory(_, io, $, SAILS_LOCALS, location, File, FormData);
+  }
+  //˙°˚°·
+  //‡AMD ˚¸
+  else if(typeof define === 'function' && define.amd) {// eslint-disable-line no-undef
+    throw new Error('Global `define()` function detected, but built-in AMD support in `cloud.js` is not currently recommended.  To resolve this, modify `cloud.js`.');
+    // var _define = define;// eslint-disable-line no-undef
+    // _define(['_', 'sails.io.js', '$', 'SAILS_LOCALS', 'location', 'file'], factory);
+  }
+  //˙°˚˙°·
+  //‡NUDE ˚°·˛
+  else {
+    // required deps:
+    if (!global._) { throw new Error('`_` global does not exist on the page yet. (If you\'re using Sails, please check dependency loading order in pipeline.js and make sure the Lodash library is getting brought in before `cloud`.)'); }
+    _ = global._;
+    // optional deps:
+    if (global.io !== undefined) {
+      if (typeof global.io !== 'function') {
+        throw new Error('Could not access `io.socket`: The `io` global is invalid at the moment:' + global.io + '\n(If you\'re using Sails, please check dependency loading order in pipeline.js and make sure the sails.io.js library is getting brought in before `cloud`.)');
+      }
+      else if (typeof global.io.socket === 'undefined') {
+        throw new Error('Could not access `io.socket`: `io` does not have a `socket` property.  Make sure `sails.io.js` is being injected in a <script> tag!');
+      }
+      else {
+        io = global.io;
+      }
+    }//ﬁ
+    if (global.$ !== undefined) {
+      if (typeof global.$ !== 'function') {
+        throw new Error('The `$` global is not valid at the moment:' + global.$ + '\n(If you\'re using Sails, please check dependency loading order in pipeline.js and make sure the jQuery library is getting brought in before `cloud`.)');
+      }
+      else {
+        $ = global.$;
+      }
+    }//ﬁ
+    if (global.SAILS_LOCALS !== undefined) {
+      if (!_.isObject(global.SAILS_LOCALS)) {
+        throw new Error('The `SAILS_LOCALS` global is not valid at the moment:' + global.SAILS_LOCALS + '\n(Please check and make sure you are using `<%- exposeLocalsToBrowser() %>` in your server-side view *before* the rest of your scripts.)');
+      }
+      else {
+        SAILS_LOCALS = global.SAILS_LOCALS;
+      }
+    }//ﬁ
+
+    // export:
+    if (global.Cloud) { throw new Error('Cannot expose global variable: Conflicting global (`cloud`) already exists!'); }
+    global.Cloud = factory(_, io, $, SAILS_LOCALS, location, File, FormData);
+  }
+})(this, function (_, io, $, SAILS_LOCALS, location, File, FormData){
+
 
 
   /**
@@ -114,13 +182,9 @@
 
 
 
-  //  ███████╗██╗  ██╗██████╗  ██████╗ ██████╗ ████████╗███████╗
-  //  ██╔════╝╚██╗██╔╝██╔══██╗██╔═══██╗██╔══██╗╚══██╔══╝██╔════╝
-  //  █████╗   ╚███╔╝ ██████╔╝██║   ██║██████╔╝   ██║   ███████╗
-  //  ██╔══╝   ██╔██╗ ██╔═══╝ ██║   ██║██╔══██╗   ██║   ╚════██║
-  //  ███████╗██╔╝ ██╗██║     ╚██████╔╝██║  ██║   ██║   ███████║
-  //  ╚══════╝╚═╝  ╚═╝╚═╝      ╚═════╝ ╚═╝  ╚═╝   ╚═╝   ╚══════╝
-  // Module exports:
+
+
+
 
   /**
    * Cloud (SDK)
@@ -134,9 +198,6 @@
    * ```
    * Cloud.setup({
    *   apiBaseUrl: 'https://example.com',
-   *   usageOpts: {
-   *     arginStyle: 'serial'
-   *   },
    *   methods: {
    *     doSomething: 'PUT /api/v1/projects/:id',
    *     // ...
@@ -148,17 +209,8 @@
    * > (Technically, it should work anyway though.  But yeah, no reason to tempt the fates.)
    *
    * ### Basic Usage
-   *
    * ```
-   * var user = await Cloud.findOneUser(3);
-   * ```
-   *
-   * ```
-   * var user = await Cloud.findOneUser.with({ id: 3 });
-   * ```
-   *
-   * ```
-   * Cloud.doSomething.with({
+   * Cloud.doSomething({
    *   someParam: ['things', 3235, null, true, false, {}, []]
    *   someOtherParam: 2523,
    *   etc: 'more things'
@@ -174,7 +226,7 @@
    *
    * ### Negotiating Errors
    * ```
-   * Cloud.signup.with({...})
+   * Cloud.signup(...)
    * .switch({
    *   error: function (err) { ... },
    *   usernameAlreadyInUse: function (recommendedAlternativeUsernames) { ... },
@@ -185,13 +237,13 @@
    *
    * ### Using WebSockets
    * ```
-   * Cloud.doSomething.with({...})
+   * Cloud.doSomething(...)
    * .protocol('jQuery')
    * .exec(...);
    * ```
    *
    * ```
-   * Cloud.doSomething.with({...})
+   * Cloud.doSomething(...)
    * .protocol('io.socket')
    * .exec(...);
    * ```
@@ -199,20 +251,20 @@
    * ##### Providing a particular jQuery or SailsSocket instance
    *
    * ```
-   * Cloud.doSomething.with({...})
+   * Cloud.doSomething(...)
    * .protocol(io.socket)
    * .exec(...);
    * ```
    *
    * ```
-   * Cloud.doSomething.with({...})
+   * Cloud.doSomething(...)
    * .protocol($)
    * .exec(...);
    * ```
    *
    * ### Using Custom Headers
    * ```
-   * Cloud.doSomething.with({...})
+   * Cloud.doSomething(...)
    * .headers({
    *   'X-Auth': 'whatever'
    * })
@@ -229,20 +281,15 @@
   var Cloud = {};
 
 
-  // FUTURE:  Cloud.getUrlFor()
-  // (similar to https://sailsjs.com/documentation/reference/application/sails-get-url-for)
-  // (but would def need to provide a way of providing values for URL pattern variables like `:id`)
-
-
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  // FUTURE: finish this when time allows   (might be better to have it work by attaching dedicated
+  // FUTURE: finish this when time allows   (would be better to have it work by attaching dedicated
   // nav methods rather than a generic nav method though)
   // ```
   // // A mapping of names of view actions to URL
   // // > provided to `.setup()`, for use in .navigate()
   // var _navigableUrlsByViewActionName;
-  //
-  //
+
+
   // /**
   //  * Cloud.navigate()
   //  *
@@ -316,13 +363,6 @@
     // ```
     // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-    if (options.methods.on) {
-      throw new Error('Cannot .setup() Cloud SDK: `.on()` is reserved.  It cannot be used as the name for a method.');
-    }
-    if (options.methods.off) {
-      throw new Error('Cannot .setup() Cloud SDK: `.off()` is reserved.  It cannot be used as the name for a method.');
-    }
-
     // Interpret methods
     var methods = _.reduce(options.methods, function(memo, appLevelSdkEndpointDef, methodName) {
 
@@ -378,7 +418,7 @@
 
       // Build the actual method that will be called at runtime:
       ////////////////////////////////////////////////////////////////////////
-      var _helpCallCloudMethod = function (argins) {
+      memo[methodName] = function (argins) {
 
         //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++//
         // There are 3 ways to define an SDK wrapper for a cloud endpoint.
@@ -486,12 +526,13 @@
                 requestInfo.protocolName = 'io.socket';
                 requestInfo.protocolInstance = _protocolNameOrInstance;
               }
-              else if (_protocolNameOrInstance.toString() === '[Package: machinepack-http]' || _protocolNameOrInstance.toString() === '[Package: sails.helpers.http]') {
+              else if (_protocolNameOrInstance.toString() === '[Package: machinepack-http]') {
                 requestInfo.protocolName = 'machinepack-http';
                 requestInfo.protocolInstance = _protocolNameOrInstance;
               }
-              // FUTURE: maybe native browser "fetch"?
-              // FUTURE: maybe native Node "http"?
+              // FUTURE: maybe "axios"?
+              // FUTURE: maybe "fetch"?
+              // FUTURE: maybe "request"?
               else {
                 throw new Error('Unrecognized instance provided to `.protocol()`: `'+_protocolNameOrInstance+'`');
               }
@@ -673,39 +714,38 @@
 
               // Check for file uploads.
               //
-              // If `FormData` constructor is available, check to see if any
-              // of the param values are File/FileList instances, or arrays of
-              // File instances, or special File wrappers, or arrays of special
-              // File wrappers. If they are, then remove them from a shallow
-              // clone of the params dictionary, and set them up separately.
-              // (The files will be attached to the request _after_ the text
-              // parameters.)
-              var uploadsByFieldName = {};
-              if (FormData && textParamsByFieldName) {
+              // If `File`+`FormData` constructors are available, check to
+              // see if any of the param values are File instances.  If
+              // they are, then remove them from a shallow clone of the
+              // params dictionary, and set them up separately.
+              // (The files will be attached to the request _after_
+              // the text parameters.)
+              var filesByFieldName = {};
+              if (File && FormData && textParamsByFieldName) {
                 textParamsByFieldName = _.extend({}, textParamsByFieldName);
                 _.each(textParamsByFieldName, function(value, fieldName){
-                  if (_representsOneOrMoreFiles(value)) {
-                    uploadsByFieldName[fieldName] = value;
+                  if (_.isObject(value) && value instanceof File) {
+                    filesByFieldName[fieldName] = value;
                     delete textParamsByFieldName[fieldName];
                   }
-                });//∞
+                });
               }//ﬁ
 
               // Don't allow file uploads for GET requests,
               // or if the FormData constructor is somehow missing.
-              if (_.keys(uploadsByFieldName).length > 0) {
+              if (_.keys(filesByFieldName).length > 0) {
                 if (requestInfo.verb.match(/get/i)) {
                   throw new Error(
-                    'Detected File or FileList instance(s) provided for parameter(s):  '+
-                    _.keys(uploadsByFieldName)+'\n'+
+                    'Detected File instance(s) provided for parameter(s):  '+
+                    _.keys(filesByFieldName)+'\n'+
                     'But this is a nullipotent ('+requestInfo.verb.toUpperCase()+') '+
                     'request, which does not support file uploads.'
                   );
                 }//•
                 if (!FormData) {
                   throw new Error(
-                    'Detected File or FileList instance(s) provided for parameter(s):  '+
-                    _.keys(uploadsByFieldName)+'\n'+
+                    'Detected File instance(s) provided for parameter(s):  '+
+                    _.keys(filesByFieldName)+'\n'+
                     'But the native FormData constructor does not exist!'
                   );
                 }
@@ -733,127 +773,38 @@
                     ajaxOpts.data = textParamsByFieldName;
                   }
                   // Else if there are files, attach them properly,
-                  // alongside the other stuff in the form -- either
-                  // in the body or as querystring parameters, depending
-                  // on what kind of data they are.
-                  //
+                  // alongside the other stuff in the form.
                   // > Note that we include text params **FIRST**,
                   // > in order to support order-aware body parsers
-                  // > that rely on pessimistic upstream awareness,
-                  // > optimizing uploads and preventing DDoS attacks.
-                  // >
-                  // > Also note that we skip text params and file fields w/
-                  // > `undefined` values for consistency w/ Sails conventions.
-                  //
-                  // > Finally, one last thing to consider:
-                  // > If a value is NOT something that needs special encoding
-                  // > to accurately capture its meaning and data type (e.g. if
-                  // > it is a string), then we simply attach it to the body as
-                  // > form data.  But otherwise, we have to do something fancy
-                  // > to get it to be losslessly encoded for use in backend code.
-                  else if (_.keys(uploadsByFieldName).length > 0){
+                  // > that rely on pessimistic upstream awareness
+                  // > optimize uploads and prevent DDoS attacks.
+                  else if (_.keys(filesByFieldName).length > 0){
                     ajaxOpts.processData = false;
                     ajaxOpts.contentType = false;
                     ajaxOpts.data = new FormData();
                     _.each(textParamsByFieldName, function(value, fieldName){
-                      if (value === undefined) { return; }//•
-                      if (_.isString(value)) {
-                        ajaxOpts.data.append(fieldName, value);
-                      } else {
-                        // Use the "X-JSON-MPU-Params" header to signal to the
-                        // server that this text param is encoded as stringified
-                        // JSON, even though the request's content type would
-                        // suggest otherwise (because it's multipart/form-data
-                        // in order to handle file uploads).
-                        //
-                        // > This is "the new way" of solving this problem.
-                        // > For more info about "the old way" of "solving" this
-                        // > that didn't really work for everything (i.e. doing
-                        // > a recursive dive over the value and attempting to
-                        // > losslessly encode it in the URL query string), see:
-                        // > https://github.com/mikermcneil/parasails/commit/28732b1ed55eb4697de4bf4c559f0319cf773041
-                        requestInfo.headers = requestInfo.headers||{};
-                        if (requestInfo.headers['X-JSON-MPU-Params']) {
-                          requestInfo.headers['X-JSON-MPU-Params'] += ','+fieldName;
-                        } else {
-                          requestInfo.headers['X-JSON-MPU-Params'] = fieldName;
-                        }
-
-                        // FUTURE: do a deep-crawl to sanitize prior to stringification (as alluded to below) -- i.e. to strip undefined array items, etc
-                        var stringifiedValue;
-                        try {
-                          stringifiedValue = JSON.stringify(value);
-                        } catch (unusedErr) {
-                          var errMsgPrefix = 'Could not encode value provided for '+fieldName+' because the value is (or contains) ';
-                          var errMsgSuffix = '.  In a request that contains one or more file uploads, any additional text parameter values need to be encoded in such a way that they can be losslessly parsed by the Sails framework.\n [?] Unsure?  Reach out at https://sailsjs.com/support';
-                          throw new Error(errMsgPrefix+'data that cannot be stringified as JSON (usually, this means it contains circular references-- i.e. its properties or array items are actually references to itself, or each other)'+errMsgSuffix);
-                        }
-                        ajaxOpts.data.append(fieldName, stringifiedValue);
+                      // Skip `undefined` values to more accurately mirror
+                      // the behavior of JSON.stringify()
+                      if (value === undefined) { return; }
+                      ajaxOpts.data.append(fieldName, value);
+                    });
+                    _.each(filesByFieldName, function(file, fieldName){
+                      // Skip `undefined` values for consistency.
+                      if (file === undefined) { return; }
+                      if (!_.isObject(file) || !_.isObject(file.constructor) || file.constructor.name !== 'File') {
+                        throw new Error('Cannot upload as '+fieldName+' because the provided value is not a File instance.  Instead, got:'+file);
                       }
-                    });//∞
-
-                    _.each(uploadsByFieldName, function(fileOrFileList, fieldName){
-                      if (fileOrFileList === undefined) { return; }
-                      if (!_representsOneOrMoreFiles(fileOrFileList)) {
-                        throw new Error('Cannot upload as "'+fieldName+'" because the provided value is not a File instance, an array of File instances, a dictionary like `{file: someFileInstance, name: \'filename-override.png\'}`, or an array of such wrapper dictionaries.  Instead, got: '+fileOrFileList+'\n\nNote that this can sometimes occur due to problems with code minification (e.g. uglify configuration).');
-                      }
-                      // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-                      // FUTURE: throw usage error if wrapper (i.e. with `.file`) has a `.name`, override,
-                      // but it isn't a valid string  (i.e. truthy, decent chars, & not too long)
-                      // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-                      if (_.isArray(fileOrFileList) || (_.isObject(fileOrFileList) && _.isObject(fileOrFileList.constructor) && fileOrFileList.constructor.name === 'FileList')) {
-                        for (var i = 0; i < fileOrFileList.length; i++) {
-                          if (fileOrFileList[i] instanceof File) {
-                            ajaxOpts.data.append(fieldName, fileOrFileList[i], fileOrFileList[i].name);
-                          } else {
-                            ajaxOpts.data.append(fieldName, fileOrFileList[i].file, fileOrFileList[i].name||fileOrFileList[i].file.name);
-                          }
-                        }//∞
-                      }
-                      else {
-                        if (fileOrFileList instanceof File) {
-                          ajaxOpts.data.append(fieldName, fileOrFileList, fileOrFileList.name);
-                        } else {
-                          ajaxOpts.data.append(fieldName, fileOrFileList.file, fileOrFileList.name||fileOrFileList.file.name);
-                        }
-                      }
-                    });//∞
+                      ajaxOpts.data.append(fieldName, file, file.name);
+                    });
                   }
                   // Otherwise, attach params as a JSON-encoded request body.
                   else {
-                    // If any of our text params are arrays, then before stringifying,
-                    // make a shallow clone and strip out any `undefined` values
-                    // that exist as items at the top level of the array.  (This
-                    // prevents them from automatically being changed into `null`
-                    // by JSON.stringify().)
-                    // > (This behavior is a breaking change that was introduced
-                    // > in parasails@0.9.0)
-                    // - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-                    // > FUTURE: Instead, do a deep crawl and mimic the behavior of RTTC:
-                    // > https://github.com/node-machine/rttc/blob/8a84191dc786e872a6c28b24566539573b2a2c4d/lib/helpers/rebuild-recursive.js#L77-L90
-                    // > ^^That'll take care of several other common edge cases that
-                    // > are handled in a kinda strange way by JSON.stringify(),
-                    // > including `NaN`, etc.
-                    // - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-                    var sanitizedTPBFN = _.mapValues(textParamsByFieldName, function(value) {
-                      var sanitizedValue;
-                      if (_.isArray(value)) {
-                        sanitizedValue = _.clone(value);
-                        _.remove(sanitizedValue, function(item){
-                          return item === undefined;
-                        });//∞
-                      } else {
-                        sanitizedValue = value;
-                      }
-                      return sanitizedValue;
-                    });
-                    ajaxOpts.data = JSON.stringify(sanitizedTPBFN);
+                    ajaxOpts.data = JSON.stringify(textParamsByFieldName);
                     ajaxOpts.processData = false;
                     ajaxOpts.contentType = 'application/json; charset=UTF-8';
                   }
 
-                  // Attach headers so they'll be included in our $.ajax() call.
-                  if (requestInfo.headers !== undefined) {
+                  if (typeof requestInfo.headers !== 'undefined') {
                     ajaxOpts.headers = requestInfo.headers;
                   }
 
@@ -933,12 +884,15 @@
 
                   var socket = requestInfo.protocolInstance;
 
-                  // Check to be sure that none of the parameter values are
-                  // attempted file uploads.
+                  // If `File` constructor is available, check to be sure
+                  // that none of the parameter values are File instances.
+                  // > Note that if the File constructor is NOT available,
+                  // > then we don't even bother checking (it's not like it
+                  // > would work anyway!)
                   if (File && requestInfo.params) {
                     _.each(requestInfo.params, function(value, fieldName){
-                      if (_representsOneOrMoreFiles(value)) {
-                        throw new Error('Detected File-like data provided for the "'+fieldName+'" parameter -- but file uploads are not currently supported using WebSockets / Socket.io.  Please call this method using a different request protocol (e.g. `protocol: \'jQuery\'`)');
+                      if (_.isObject(value) && value instanceof File) {
+                        throw new Error('Detected File instance provided for the `'+fieldName+'` parameter -- but file uploads are not currently supported using WebSockets / Socket.io.  Please call this method using a different request protocol (e.g. `protocol: \'jQuery\'`)');
                       }
                     });
                   }//ﬁ
@@ -997,16 +951,20 @@
                 //  ██║╚██╔╝██║██╔═══╝ ╚════╝██╔══██║   ██║      ██║   ██╔═══╝
                 //  ██║ ╚═╝ ██║██║           ██║  ██║   ██║      ██║   ██║
                 //  ╚═╝     ╚═╝╚═╝           ╚═╝  ╚═╝   ╚═╝      ╚═╝   ╚═╝
+                //
                 case 'machinepack-http': return (function _doAjaxWithMpHttp(){
 
-                  // If there are request parameters, check to be sure
+                  // If `File` constructor is available, check to be sure
                   // that none of the parameter values are File instances.
-                  if (requestInfo.params) {
+                  // > Note that if the File constructor is NOT available,
+                  // > then we don't even bother checking (it's not like it
+                  // > would work anyway!)
+                  if (File && requestInfo.params) {
                     _.each(requestInfo.params, function(value, fieldName){
-                      if (_representsOneOrMoreFiles(value)) {
-                        throw new Error('Detected File-like data provided for the "'+fieldName+'" parameter -- but file uploads are not currently supported in Cloud SDK when using "machinepack-http".  Please call this method using a different request protocol.');
+                      if (_.isObject(value) && value instanceof File) {
+                        throw new Error('Detected File instance provided for the `'+fieldName+'` parameter -- but file uploads are not currently supported using machinepack-http.  Please call this method using a different request protocol.');
                       }
-                    });//∞
+                    });
                   }//ﬁ
 
                   var mpHttpOpts = {
@@ -1027,7 +985,7 @@
                     mpHttpOpts.headers = requestInfo.headers;
                   }
 
-                  requestInfo.protocolInstance.sendHttpRequest.with(mpHttpOpts)
+                  requestInfo.protocolInstance.sendHttpRequest(mpHttpOpts)
                   .switch({
                     error: function (err) {
                       return proceed(err);
@@ -1580,7 +1538,7 @@
         //   protocol: 'io.socket',//optional, defaults to 'jQuery'
         //   headers: {'x-auth': 'foo'},//optional, defaults to undefined
         // }
-        else if (appLevelSdkEndpointDef && typeof appLevelSdkEndpointDef === 'object') {
+        else if (typeof appLevelSdkEndpointDef === 'object') {
           if (!_.isUndefined(appLevelSdkEndpointDef.headers)) {
             deferred.headers(appLevelSdkEndpointDef.headers);
           }
@@ -1653,11 +1611,10 @@
           }
         });//∞
 
-        // Then create a shallow copy of `requestInfo.params` without the route path
-        // parameters in it, and reattach that as `requestInfo.params`.
-        // (This prevents accidentally smashing argins and causing unintended
-        // consequences in userland code.)
-        requestInfo.params = _.omit(requestInfo.params, _.keys(routeParameters));
+        // Then delete them from the `params` object
+        Object.keys(routeParameters).forEach(function (paramName){
+          delete requestInfo.params[paramName];
+        });
 
         // Now stick the route parameters into the destination url
         requestInfo.url = requestInfo.url.replace(/(\:[^\/\:\.\?]+\??)/g, function ($all, $1){
@@ -1665,6 +1622,7 @@
           if (routeParameters[routeParamName] === undefined) { return ''; }
           return routeParameters[routeParamName];
         });
+
 
 
         // Prepend the API base URL to `requestInfo.url`.
@@ -1685,68 +1643,12 @@
         // Return the deferred object.
         return deferred;
 
-      };//ƒ  </ _helpCallCloudMethod >
-
-      // Primary definition of this Cloud.* method()
-      memo[methodName] = function () {
-
-        // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-        // FUTURE: If no `args` configured, then check route params (url pattern
-        // variables).  If there are any, attempt to use their names... maybe?
-        // Could actually be MORE confusing though-- needs to be played with.
-        //
-        // UPDATE: OK probably best not to do this actually.
-        // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-        if (!appLevelSdkEndpointDef.args && arguments.length > 0) {
-          throw new Error(
-            'Cannot call this Cloud.*() method with serial usage because Cloud SDK is not aware of the appropriate parameter names!  Please pass in named parameter values using .with({…}) instead--or if you\'re the implementor of the corresponding Sails action, change it on the backend and regenerate the SDK so that this method is configured with an `args` array.\n'+
-            ' [?] If you\'re unsure, visit https://sailsjs.com/support for help.'
-          );
-        }
-
-        // Parse arguments into argins
-        var argins = _.reduce(arguments, function(argins, argin, i){
-
-          if (!(appLevelSdkEndpointDef.args[i])) {
-            throw new Error('Invalid usage with serial arguments: Received unexpected '+(i===0?'first':i===1?'second':i===2?'third':(i+1)+'th')+' argument.');
-          }
-
-          // Reject special notation.
-          // > Remember, if we made it to this point, we know it's valid b/c it's already been checked.
-          if (appLevelSdkEndpointDef.args[i] === '{*}') {
-            if (argin !== undefined && (!_.isObject(argin) || _.isArray(argin) || _.isFunction(argin))) {
-              throw new Error('Invalid usage with serial arguments: If provided, expected '+(i===0?'first':i===1?'second':i===2?'third':(i+1)+'th')+' argument to be a dictionary (plain JavaScript object, like `{}`).  But instead, got: '+argin+'');
-            } else if (argin !== undefined && _.intersection(_.keys(argins), _.keys(argin)).length > 0) {
-              throw new Error('Invalid usage with serial arguments: If provided, expected '+(i===0?'first':i===1?'second':i===2?'third':(i+1)+'th')+' argument to have keys which DO NOT overlap with other already-configured argins!  But in reality, it contained conflicting keys: '+_.intersection(_.keys(argins), _.keys(argin))+'');
-            }
-            _.extend(argins, argin);
-          } else {
-            // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-            // Note: For design considerations & historical context, see:
-            // • https://github.com/node-machine/machine/commit/fa3829fa637a267793be4a7fb573e008581c4656
-            // • https://github.com/node-machine/spec/pull/2/files#diff-eba3c42d87dad8fb42b4080df85facec
-            // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-            // FUTURE: Support declaring variadic usage
-            // https://github.com/node-machine/spec/pull/2/files#diff-eba3c42d87dad8fb42b4080df85facecR58
-            // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-            // FUTURE: Support declaring spread arguments
-            // https://github.com/node-machine/spec/pull/2/files#diff-eba3c42d87dad8fb42b4080df85facecR66
-            // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-            // Otherwise interpret this as the code name of an input
-            argins[appLevelSdkEndpointDef.args[i]] = argin;
-          }
-
-          return argins;
-
-        }, {});//= (∞)
-
-        return _helpCallCloudMethod(argins);
-
-      };//ƒ
+      };//</ definition of this Cloud.* method()>
 
       // Escape hatch that always allows using named parameters.
+      // (TODO: replace this temporary hack with the new version of cloud.js)
       memo[methodName].with = function (argins) {
-        return _helpCallCloudMethod(argins);
+        return memo[methodName](argins);
       };//ƒ
 
       return memo;
@@ -1755,233 +1657,11 @@
     // Remove the `.setup()` method, now that it's been called.
     delete Cloud.setup;
 
-    // Now attach the configured endpoint methods
+    // Now attach the methods
     _.extend(Cloud, methods);
 
-    /**
-     * Cloud.on()
-     *
-     * Listen for a particular kind of socket events, and trigger a function
-     * any time one of them is received.
-     *
-     * > This is almost identical to `io.socket.on()`, except that:
-     * > •     Cloud.on()  supports passing in a dictionary in lieu of
-     * >       a function for its second argument.  If provided, this dictionary
-     * >       will be used as a mini-router based around the conventional "verb"
-     * >       property in relevant incoming socket messages.  In addition, if the
-     * >       special, reserved "*" key is registered as a catchall function,
-     * >       it will be used to handle any messages w/ a verb that doesn't match
-     * >       any of the other verbs, or that are missing a "verb" altogether
-     * >       (i.e. to allow for custom error handling-- otherwise, a built-in error
-     * >       is thrown.)  If a socket message arrives with `verb: '*'`, while
-     * >       kinda weird, it is still routed as expected.
-     *
-     * @param  {String} socketEventName
-     * @param  {Function|Dictionary} handleSocketMsg
-     *
-     * @returns {Function}  (the actual handler function that was bound, for potential use later with `Cloud.off()`)
-     */
-    Cloud.on = function(socketEventName, handleSocketMsg) {
-      if (!socketEventName || !_.isString(socketEventName)) { throw new Error('Invalid usage for `Cloud.on()`: Must pass in a valid first argument (a string; the name of the socket event to listen for -- i.e. the variety of incoming WebSocket messages to receive and handle).'); }
-      if (!handleSocketMsg) { throw new Error('Invalid usage for `Cloud.on()`: Must pass in a second argument (the function to run every time this WebSocket event is received).'); }
-
-      if (!io || !io.socket) { throw new Error('Could not bind a cloud event listener with `Cloud.on()`: WebSocket support is not currently available (`io.socket` is not available).  Make sure `sails.io.js` is being injected in a <script> tag!'); }
-
-      var actualHandler;
-      if (_.isObject(handleSocketMsg) && !_.isArray(handleSocketMsg) && !_.isFunction(handleSocketMsg)) {
-        // Further negotiate based on "verb", if configured to do so.
-        actualHandler = function(msg) {
-          var handlerToRun;
-          if (_.contains(_.keys(handleSocketMsg), msg.verb)) {
-            handlerToRun = handleSocketMsg[msg.verb];
-          } else if (handleSocketMsg['*']) {
-            handlerToRun = handleSocketMsg['*'];
-          } else {
-            throw new Error('Unhandled "'+socketEventName+'" cloud event:  Received an incoming WebSocket message with an unrecognized "verb" property: "'+msg.verb+'".  If this was deliberate, register another key in the call to `Cloud.on(\''+socketEventName+'\', {…, '+msg.verb+': (msg)=>{…} })` to recognize this new sub-category of cloud event and handle it accordingly.  Otherwise, if you\'d like to silently ignore messages with other "verb"s (or no "verb" at all), then pass a function in to Cloud.on(), instead of a dictionary -- or register a "*" key as a catchall, and make its function a no-op.');
-          }
-
-          try {
-            handlerToRun(msg);
-          } catch (err) {
-            if (!_.isObject(err)) { throw err; }
-            err.message = 'An uncaught error was thrown while handling an incoming WebSocket message (a "'+socketEventName+'" cloud event).  '+ err.message;
-            throw err;
-          }
-        };//ƒ
-
-      } else if (_.isFunction(handleSocketMsg)) {
-        // Otherwise, just run the handler function.
-        actualHandler = handleSocketMsg;
-      } else {
-        throw new Error('Invalid usage for `Cloud.on()`: Second argument must either be a function (the function to run every time this socket event is received) or a dictionary of functions that will be negotiated and routed to based on the incoming message\'s conventional "verb" property (e.g. `{ "bankWireReceived": (msg)=>{…}, "destroyed": (msg)=>{…}, "*": (msg)=>{…} }`.');
-      }
-
-      io.socket.on(socketEventName, actualHandler);//œ
-
-      return actualHandler;
-    };//</ .on() >
-
-    /**
-     * Cloud.off()
-     *
-     * Stop listening to ANY AND ALL WEBSOCKET MESSAGES of a particular kind; or
-     * to WebSocket messages from a specific handler function.
-     *
-     * > This is almost identical to `io.socket.off()`, except that it ALWAYS
-     * > applies to all future socket messages that arrive under the given event
-     * > name.
-     *
-     * @param  {String} socketEventName
-     * @param  {Function?} specificHandler
-     */
-    Cloud.off = function(socketEventName, specificHandler) {
-      if (!socketEventName || !_.isString(socketEventName)) { throw new Error('Invalid usage for `Cloud.off()`: Must pass in a first argument (a string; the name of the socket event to stop listening for -- i.e. the variety of incoming WebSocket messages to reject and ignore).'); }
-      if (specificHandler !== undefined && !_.isFunction(specificHandler)) { throw new Error('Invalid usage for `Cloud.off()`: If a second argument is provided, it should be a function  (the specific handler you want to stop running every time a matching WebSocket message is received).'); }
-
-      if (!io || !io.socket) { throw new Error('Could not stop listening to cloud events with `Cloud.off()`: WebSocket support is not currently available (`io.socket` is not available).  Make sure `sails.io.js` is being injected in a <script> tag!'); }
-
-      io.socket.off(socketEventName, specificHandler);
-    };//</ .off() >
-
-  };//ƒ   </ .setup() >
+  };
 
   return Cloud;
 
-}, function(global, factory) {
-  var _;
-  var io;
-  var $;
-  var SAILS_LOCALS;
-  var location;
-  var File;
-  var FileList;
-  var FormData;
-
-  // First, handle optional deps that are gleaned from the global state:
-  // > Note: Instead of throwing, we ignore invalid globals.
-  // > (Remember the bug w/ the File global that happened in Socket.io
-  // > back in ~2015!)
-  // =====================================================================
-  if (global.location !== undefined) {
-    if (global.location && typeof global.location === 'object' && (global.location.constructor.name === 'Location' || global.location.constructor.toString() === '[object Location]' || (_.isObject(global.location) && global.location.href))) {
-      location = global.location;
-    }
-  }//ﬁ
-  if (global.File !== undefined) {
-    if (global.File && typeof global.File === 'function' && global.File.name === 'File') {
-      File = global.File;
-    }
-  }//ﬁ
-  if (global.FileList !== undefined) {
-    if (global.FileList && typeof global.FileList === 'function' && global.FileList.name === 'FileList') {
-      FileList = global.FileList;
-    }
-  }//ﬁ
-  if (global.FormData !== undefined) {
-    if (global.FormData && typeof global.FormData === 'function' && global.FormData.name === 'FormData') {
-      FormData = global.FormData;
-    }
-  }//ﬁ
-
-  // Then, load the rest of the deps:
-  // =====================================================================
-
-  //˙°˚°·.
-  //‡CJS  ˚°˚°·˛
-  if (typeof exports === 'object' && typeof module !== 'undefined') {
-    var _require = require;// eslint-disable-line no-undef
-    var _module = module;// eslint-disable-line no-undef
-    // required deps:
-    if (typeof _ === 'undefined') {
-      try {
-        _ = _require('@sailshq/lodash');
-      } catch (e) { if (e.code === 'MODULE_NOT_FOUND') {/* ok */} else { throw e; } }
-    }//ﬁ
-    if (typeof _ === 'undefined') {
-      try {
-        _ = _require('lodash');
-      } catch (e) { if (e.code === 'MODULE_NOT_FOUND') {/* ok */} else { throw e; } }
-    }//ﬁ
-
-    // optional deps:
-    try { $ = _require('jquery'); } catch (e) { if (e.code === 'MODULE_NOT_FOUND') {/* ok */} else { throw e; } }
-    try {
-
-      io = _require('socket.io-client');
-      var sailsIO = _require('sails.io.js');
-
-      // Instantiate the library (and start auto-connecting)
-      io = sailsIO(io);
-
-      // Disable logging
-      io.sails.environment = 'production';
-
-      // Note that, if there is no location global, then after one tick,
-      // if `io.sails.url` has still not been set, weird errors will emerge.
-      // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-      // FUTURE: figure out a way to provide a better err msg about this--
-      // i.e. specifically the case where `.setup()` isn't called within one tick.
-      // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-    } catch (err) {
-      if (err.code === 'MODULE_NOT_FOUND') {
-        // that's ok-- just make sure and unwind any vars that might have
-        // gotten partially set up, since we attempted to require more than
-        // one thing above (and e.g. the second `require()` might have failed)
-        io = undefined;
-      } else {
-        throw err;
-      }
-    }
-
-    SAILS_LOCALS = undefined;
-
-    // export:
-    _module.exports = factory(_, io, $, SAILS_LOCALS, location, File, FileList, FormData);
-  }
-  //˙°˚°·
-  //‡AMD ˚¸
-  else if(typeof define === 'function' && define.amd) {// eslint-disable-line no-undef
-    throw new Error('Global `define()` function detected, but built-in AMD support in `cloud.js` is not currently recommended.  To resolve this, modify `cloud.js`.');
-    // var _define = define;// eslint-disable-line no-undef
-    // _define(['_', 'sails.io.js', '$', 'SAILS_LOCALS', 'location', 'file', …, …], factory);
-  }
-  //˙°˚˙°·
-  //‡NUDE ˚°·˛
-  else {
-    // required deps:
-    if (!global._) { throw new Error('`_` global does not exist on the page yet. (If you\'re using Sails, please check dependency loading order in pipeline.js and make sure the Lodash library is getting brought in before `cloud`.)'); }
-    _ = global._;
-    // optional deps:
-    if (global.io !== undefined) {
-      if (typeof global.io !== 'function') {
-        throw new Error('Could not access `io.socket`: The `io` global is invalid at the moment:' + global.io + '\n(If you\'re using Sails, please check dependency loading order in pipeline.js and make sure the sails.io.js library is getting brought in before `cloud`.)');
-      }
-      else if (typeof global.io.socket === 'undefined') {
-        throw new Error('Could not access `io.socket`: `io` does not have a `socket` property.  Make sure `sails.io.js` is being injected in a <script> tag!');
-      }
-      else {
-        io = global.io;
-      }
-    }//ﬁ
-    if (global.$ !== undefined) {
-      if (typeof global.$ !== 'function') {
-        throw new Error('The `$` global is not valid at the moment:' + global.$ + '\n(If you\'re using Sails, please check dependency loading order in pipeline.js and make sure the jQuery library is getting brought in before `cloud`.)');
-      }
-      else {
-        $ = global.$;
-      }
-    }//ﬁ
-    if (global.SAILS_LOCALS !== undefined) {
-      if (!_.isObject(global.SAILS_LOCALS)) {
-        throw new Error('The `SAILS_LOCALS` global is not valid at the moment:' + global.SAILS_LOCALS + '\n(Please check and make sure you are using `<%- exposeLocalsToBrowser() %>` in your server-side view *before* the rest of your scripts.)');
-      }
-      else {
-        SAILS_LOCALS = global.SAILS_LOCALS;
-      }
-    }//ﬁ
-
-    // export:
-    if (global.Cloud) { throw new Error('Cannot expose global variable: Conflicting global (`cloud`) already exists!'); }
-    global.Cloud = factory(_, io, $, SAILS_LOCALS, location, File, FileList, FormData);
-  }
-});//…)
+});

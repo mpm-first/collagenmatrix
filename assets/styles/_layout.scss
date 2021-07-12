@@ -1,0 +1,43 @@
+[v-cloak] { display: none; }
+
+html, body {
+  height: 100%;
+  margin: 0;
+}
+
+body {
+  // padding-top: 56px;
+  padding-bottom: 56px;
+}
+
+#page-wrap {
+  header {
+    a:not(.btn) {
+      border-bottom: 3px solid transparent;
+
+      &.current {
+        border-bottom-color: blue;
+      }
+    }
+  }
+}
+
+.navbar {
+  .navbar-brand img {
+    max-width: 320px;
+    height: auto;
+  }
+  // border-bottom:1px solid #eee;
+}
+
+.footer {
+  // margin-top: 3rem;
+  position: absolute;
+  bottom: 0;
+  background: #777;
+
+  p {
+    text-align: right;
+    color: #fff;
+  }
+}

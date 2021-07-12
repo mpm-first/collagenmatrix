@@ -12,6 +12,8 @@
  */
 module.exports = function(grunt) {
 
+  grunt.loadNpmTasks('grunt-sync');
+
   grunt.config.set('sync', {
     dev: {
       files: [{

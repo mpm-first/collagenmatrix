@@ -48,7 +48,7 @@ module.exports = {
   },
 
 
-  fn: async function({emailAddress, topic, fullName, message}) {
+  fn: async function({ fullName, emailAddress, topic, message }) {
 
     if (!sails.config.custom.internalEmailAddress) {
       throw new Error(
@@ -62,14 +62,14 @@ your custom config -- usually in \`config/custom.js\`, \`config/staging.js\`,
 
     await sails.helpers.sendTemplateEmail.with({
       to: sails.config.custom.internalEmailAddress,
-      subject: 'New contact form message',
+      subject: 'New Contact Form Message',
       template: 'internal/email-contact-form',
       layout: false,
       templateData: {
         contactName: fullName,
         contactEmail: emailAddress,
-        topic,
-        message,
+        topic: topic,
+        message: message
       }
     });
 

@@ -2,10 +2,10 @@
   //   ╔═╗╔═╗╦  ╦╔╗╔╔╦╗┬─┐┌─┐
   //   ║╣ ╚═╗║  ║║║║ ║ ├┬┘│
   //  o╚═╝╚═╝╩═╝╩╝╚╝ ╩ ┴└─└─┘
-  // A set of basic code conventions designed to encourage quality and consistency
-  // across your Sails app's code base.  These rules are checked against
-  // automatically any time you run `npm test`.
-  // 
+  // A set of basic code conventions (similar to a .jshintrc file) designed to
+  // encourage quality and consistency across your Sails app's code base.
+  // These rules are checked against automatically any time you run `npm test`.
+  //
   // > An additional eslintrc override file is included in the `assets/` folder
   // > right out of the box.  This is specifically to allow for variations in acceptable
   // > global variables between front-end JavaScript code designed to run in the browser
@@ -27,7 +27,10 @@
   },
 
   "parserOptions": {
-    "ecmaVersion": 2018
+    "ecmaVersion": 8,
+    "ecmaFeatures": {
+      "experimentalObjectRestSpread": true
+    }
   },
 
   "globals": {
@@ -39,8 +42,9 @@
     "_": true,
 
     // Models:
-    "User": true
-    
+    "User": true,
+    "Thing": true
+
     // …and any others.
     // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   },

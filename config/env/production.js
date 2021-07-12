@@ -47,7 +47,7 @@ module.exports = {
     *                                                                          *
     ***************************************************************************/
     default: {
-      // adapter: 'sails-mysql',
+      adapter: 'sails-mysql',
       // url: 'mysql://user:password@host:port/database',
       //--------------------------------------------------------------------------
       //  /\   To avoid checking it in to version control, you might opt to set
@@ -64,7 +64,7 @@ module.exports = {
       * More adapter-specific options                                             *
       *                                                                           *
       * > For example, for some hosted PostgreSQL providers (like Heroku), the    *
-      * > extra `ssl: true` option is mandatory and must be provided.             *
+      * > extra `ssl: true` option is mandatory and must be set.                  *
       *                                                                           *
       * More info:                                                                *
       * https://sailsjs.com/config/datastores                                     *
@@ -174,25 +174,25 @@ module.exports = {
     * Production session store configuration.                                  *
     *                                                                          *
     * Uncomment the following lines to finish setting up a package called      *
-    * "@sailshq/connect-redis" that will use Redis to handle session data.     *
+    * "connect-redis" that will use Redis to store and retrieve session data.  *
     * This makes your app more scalable by allowing you to share sessions      *
     * across a cluster of multiple Sails/Node.js servers and/or processes.     *
     * (See http://bit.ly/redis-session-config for more info.)                  *
     *                                                                          *
-    * > While @sailshq/connect-redis is a popular choice for Sails apps, many  *
-    * > other compatible packages (like "connect-mongo") are available on NPM. *
+    * > While "connect-redis" is a popular choice for Sails apps, many other   *
+    * > compatible packages (like "connect-mongo") are available on NPM.       *
     * > (For a full list, see https://sailsjs.com/plugins/sessions)            *
     *                                                                          *
     ***************************************************************************/
-    // adapter: '@sailshq/connect-redis',
-    // url: 'redis://user:password@localhost:6379/databasenumber',
+    adapter: '@sailshq/connect-redis',
+    // url: 'redis://user:password@localhost:6379/dbname',
     //--------------------------------------------------------------------------
     // /\   OR, to avoid checking it in to version control, you might opt to
     // ||   set sensitive credentials like this using an environment variable.
     //
     // For example:
     // ```
-    // sails_session__url=redis://admin:myc00lpAssw2D@bigsquid.redistogo.com:9562/0
+    // sails_session__url=redis://admin:myc00lpAssw2D@bigsquid.redistogo.com:9562/sessions
     // ```
     //
     //--------------------------------------------------------------------------
@@ -221,7 +221,7 @@ module.exports = {
     *                                                                          *
     ***************************************************************************/
     cookie: {
-      // secure: true,
+      secure: true,
       maxAge: 24 * 60 * 60 * 1000,  // 24 hours
     },
 
@@ -250,10 +250,9 @@ module.exports = {
     * > Be sure to use the right protocol!  ("http://" vs. "https://")         *
     *                                                                          *
     ***************************************************************************/
-    // onlyAllowOrigins: [
-    //   'https://example.com',
-    //   'https://staging.example.com',
-    // ],
+    onlyAllowOrigins: [
+      'https://ration.io',
+    ],
 
 
     /***************************************************************************
@@ -262,21 +261,21 @@ module.exports = {
     * then uncomment the following lines.  This tells Socket.io about a Redis  *
     * server it can use to help it deliver broadcasted socket messages.        *
     *                                                                          *
-    * > Be sure a compatible version of @sailshq/socket.io-redis is installed! *
+    * > Be sure you have a compatible version of socket.io-redis installed!    *
     * > (See https://sailsjs.com/config/sockets for the latest version info)   *
     *                                                                          *
     * (https://sailsjs.com/docs/concepts/deployment/scaling)                   *
     *                                                                          *
     ***************************************************************************/
-    // adapter: '@sailshq/socket.io-redis',
-    // url: 'redis://user:password@bigsquid.redistogo.com:9562/databasenumber',
+    adapter: '@sailshq/socket.io-redis',
+    // url: 'redis://user:password@bigsquid.redistogo.com:9562/dbname',
     //--------------------------------------------------------------------------
     // /\   OR, to avoid checking it in to version control, you might opt to
     // ||   set sensitive credentials like this using an environment variable.
     //
     // For example:
     // ```
-    // sails_sockets__url=redis://admin:myc00lpAssw2D@bigsquid.redistogo.com:9562/0
+    // sails_sockets__url=redis://admin:myc00lpAssw2D@bigsquid.redistogo.com:9562/
     // ```
     //--------------------------------------------------------------------------
 
@@ -304,9 +303,6 @@ module.exports = {
     * The number of milliseconds to cache static assets in production.         *
     * (the "max-age" to include in the "Cache-Control" response header)        *
     *                                                                          *
-    * If you are caching assets with a tool like Cloudflare, you may want to   *
-    * reduce this considerably to allow more flexibility in purging the cache. *
-    *                                                                          *
     ***************************************************************************/
     cache: 365.25 * 24 * 60 * 60 * 1000, // One year
 
@@ -325,7 +321,7 @@ module.exports = {
     * (https://sailsjs.com/config/http)                                        *
     *                                                                          *
     ***************************************************************************/
-    // trustProxy: true,
+    trustProxy: true,
 
   },
 
@@ -367,6 +363,53 @@ module.exports = {
 
   /**************************************************************************
   *                                                                         *
+  * Tell Sails how it should upload files in production.                    *
+  *                                                                         *
+  * (https://sailsjs.com/config/uploads)                                    *
+  *                                                                         *
+  **************************************************************************/
+  uploads: {
+
+    /***************************************************************************
+    *                                                                          *
+    * Configure a production filesystem adapter:                               *
+    *                                                                          *
+    * 1. Choose an adapter:                                                    *
+    *    https://sailsjs.com/plugins/uploads                                   *
+    *                                                                          *
+    * 2. Install it as a dependency of your Sails app.                         *
+    *    (For example:  npm install skipper-s3 --save)                         *
+    *                                                                          *
+    * 3. Then pass it in, with any other config.                               *
+    *    (See https://sailsjs.com/config/uploads for help.)                    *
+    *                                                                          *
+    ***************************************************************************/
+    adapter: require('skipper-s3'),
+    // key: 'fake-aws-keyagsd8agsdagsdhagsd',
+    // secret: 'fake-aws-secretasdg8asgd8gsd8asgd8',
+    // bucket: 'uploaded_photos_of_things_prod',
+    // region: 'us-east-1',
+    //--------------------------------------------------------------------------
+    //  /\   To avoid checking them in to version control, you might opt to set
+    //  ||   sensitive credentials like `s3Secret` using an environment variable.
+    //
+    //  For example:
+    //  ```
+    //  sails_uploads__key=AB2g1939eaGAdeAdamdaio38103onaDs
+    //  ```
+    //
+    //  To additionally allow file uploads to be viewed by the public, add:
+    //  ```
+    //  headers: { 'x-amz-acl': 'public-read' }
+    //  ```
+    //--------------------------------------------------------------------------
+
+  },
+
+
+
+  /**************************************************************************
+  *                                                                         *
   * Production overrides for any custom settings specific to your app.      *
   * (for example, production credentials for 3rd party APIs like Stripe)    *
   *                                                                         *
@@ -374,10 +417,11 @@ module.exports = {
   *                                                                         *
   ***************************************************************************/
   custom: {
-    baseUrl: 'https://example.com',
-    internalEmailAddress: 'support@example.com',
+    baseUrl: 'https://ration.io',
+    internalEmailAddress: 'solosoyjs@gmail.com',
 
-    // sendgridSecret: 'SG.fake.3e0Bn0qSQVnwb1E4qNPz9JZP5vLZYqjh7sn8S93oSHU',
+    // mailgunDomain: 'mg.example.com',
+    // mailgunSecret: 'key-prod_fake_bd32301385130a0bafe030c',
     // stripeSecret: 'sk_prod__fake_Nfgh82401348jaDa3lkZ0d9Hm',
     //--------------------------------------------------------------------------
     // /\   OR, to avoid checking them in to version control, you might opt to
@@ -385,7 +429,8 @@ module.exports = {
     //
     // For example:
     // ```
-    // sendgridSecret=SG.fake.3e0Bn0qSQVnwb1E4qNPz9JZP5vLZYqjh7sn8S93oSHU
+    // sails_custom__mailgunDomain=mg.example.com
+    // sails_custom__mailgunSecret=key-prod_fake_bd32301385130a0bafe030c
     // sails_custom__stripeSecret=sk_prod__fake_Nfgh82401348jaDa3lkZ0d9Hm
     // ```
     //--------------------------------------------------------------------------
