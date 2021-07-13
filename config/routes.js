@@ -15,7 +15,6 @@ module.exports.routes = {
   //  ║║║║╣ ╠╩╗╠═╝╠═╣║ ╦║╣ ╚═╗
   //  ╚╩╝╚═╝╚═╝╩  ╩ ╩╚═╝╚═╝╚═╝
   'GET /':                   { action: 'view-homepage-or-redirect' },
-  'GET /friends/:virtualPageSlug?':   { action: 'friends/view-friends' },
   'GET /things/:virtualPageSlug?':     { action: 'things/view-available-things' },
 
   'GET /faq':                { view:   'pages/faq' },
@@ -37,12 +36,15 @@ module.exports.routes = {
 
   'GET /claim-account':      { action: 'entrance/view-claim-account' },
 
+  'GET /doc/:id':           { action: 'doc', skipAssets: false },
+
 
   //  ╔═╗╔═╗╦  ╔═╗╔╗╔╔╦╗╔═╗╔═╗╦╔╗╔╔╦╗╔═╗
   //  ╠═╣╠═╝║  ║╣ ║║║ ║║╠═╝║ ║║║║║ ║ ╚═╗
   //  ╩ ╩╩  ╩  ╚═╝╝╚╝═╩╝╩  ╚═╝╩╝╚╝ ╩ ╚═╝
   // Note that, in this app, these API endpoints may be accessed using the `Cloud.*()` methods
   // from the CloudSDK library.
+  'GET   /api/v1/search/:ref':                        { action: 'search' },
   '/api/v1/account/logout':                           { action: 'account/logout' },
   'PUT   /api/v1/account/update-password':            { action: 'account/update-password' },
   'PUT   /api/v1/account/update-profile':             { action: 'account/update-profile' },
@@ -61,7 +63,8 @@ module.exports.routes = {
   'PUT   /api/v1/things/:id/borrow':                  { action: 'things/borrow-thing' },
   'GET   /api/v1/things/:id/photo':                   { action: 'things/download-photo', skipAssets: false },
   'PUT   /api/v1/things/:id/schedule-return':         { action: 'things/schedule-return', skipAssets: false },
-  'PATCH /api/v1/things/:id':                         { action: 'things/update-one-thing', skipAssets: false },
+  // 'PATCH /api/v1/things/:id':                         { action: 'things/update-one-thing', skipAssets: false },
+  'PATCH /api/v1/things/:id':                         { action: 'things/edit-one-thing', skipAssets: false },
 
   'DELETE  /api/v1/friends/:id':                      { action: 'friends/remove-friend' },
   'POST   /api/v1/friends':                           { action: 'friends/add-friends' },

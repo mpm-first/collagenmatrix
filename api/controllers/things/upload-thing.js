@@ -77,7 +77,7 @@ module.exports = {
       owner: this.req.me.id
     }).fetch();
 
-    var imageSrc = url.resolve(sails.config.custom.baseUrl, '/api/v1/things/'+newThing.id+'/photo');
+    var imageSrc = url.resolve(sails.config.custom.baseUrl, '/doc/'+newThing.id);
 
     // Return the newly-created thing, with its `imageSrc`
     return {

@@ -50,6 +50,8 @@ module.exports = {
 
   fn: async function ({id, photo, label, ref}) {
 
+    console.log(arguments);
+
     var thingToUpdate = await Thing.findOne({ id });
 
     // Ensure the thing still exists.
@@ -71,7 +73,7 @@ module.exports = {
       throw 'noFileAttached';
     }
 
-    var imageSrc = url.resolve(sails.config.custom.baseUrl, '/api/v1/things/'+newThing.id+'/photo');
+    var imageSrc = url.resolve(sails.config.custom.baseUrl, '/doc/'+thingToUpdate.id);
 
     // Update the `thing` record.
     await Thing.update({id}).set({
@@ -82,9 +84,9 @@ module.exports = {
       owner: this.req.me.id
     });
 
-    // Return the newly-created thing, with its `imageSrc`
+    // Return the edited thing, with its `imageSrc`
     return {
-      id: newThing.id,
+      id: thingToUpdate.id,
       imageSrc
     };
 

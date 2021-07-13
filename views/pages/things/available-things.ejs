@@ -124,6 +124,7 @@
       </button>
     </div>
     <ajax-form action="editOneThing" :syncing.sync="syncing" :cloud-error.sync="cloudError" :handle-parsing="handleParsingEditThingForm" @submitted="submittedEditThingForm($event)">
+      <input type="hidden" v-model="selectedThing.id">
       <div class="modal-body">
         <div class="form-group">
           <label>Add a pdf:</label>
@@ -132,7 +133,7 @@
               <div class="photo-preview col">
                 <div class="image-wrapper" :class="!uploadFormData.previewImageSrc ? 'd-flex align-items-center justify-content-center' : ''">
                   <embed v-if="uploadFormData.previewImageSrc" :src="uploadFormData.previewImageSrc" width="100%" height="200"/>
-                  <embed v-else :src="selectedThing.imageSrc" width="100%" height="200"/>
+                  <embed v-else-if="selectedThing.imageSrc" :src="selectedThing.imageSrc" width="100%" height="200"/>
                   <!-- <img v-if="uploadFormData.previewImageSrc" alt="A preview of the selected item" :src="uploadFormData.previewImageSrc"/> -->
                   <span v-else class="placeholder-icon fa fa-picture-o"></span>
                 </div>

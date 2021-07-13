@@ -17,6 +17,14 @@ parasails.registerPage('available-things', {
       previewImageSrc: ''
     },
 
+    editFormData: {
+      id: '',
+      photo: undefined,
+      label: '',
+      ref: '',
+      previewImageSrc: ''
+    },
+
     // Modals which aren't linkable:
     confirmEditThingModalOpen: false,
     confirmDeleteThingModalOpen: false,
@@ -98,6 +106,7 @@ parasails.registerPage('available-things', {
       this.goto('/things');
       // Reset form data
       this.uploadFormData = {
+        id: '',
         photo: undefined,
         label: '',
         ref: '',
@@ -145,11 +154,11 @@ parasails.registerPage('available-things', {
       // Clear out any pre-existing error messages.
       this.formErrors = {};
 
-      var argins = this.uploadFormData;
+      var argins = this.editFormData;
 
-      if(!argins.photo) {
-        this.formErrors.photo = true;
-      }
+      // if(!argins.photo) {
+      //   this.formErrors.photo = true;
+      // }
 
       // If there were any issues, they've already now been communicated to the user,
       // so simply return undefined.  (This signifies that the submission should be
@@ -220,7 +229,6 @@ parasails.registerPage('available-things', {
       // Clear out any error messages about not providing an image.
       this.formErrors.photo = false;
       reader.readAsDataURL(selectedFile);
-
     },
 
     clickEditThing: function(thingId) {

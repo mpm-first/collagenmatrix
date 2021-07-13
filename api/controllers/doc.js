@@ -1,16 +1,16 @@
 module.exports = {
 
 
-  friendlyName: 'Download photo',
+  friendlyName: 'Download doc',
 
 
-  description: 'Download a photo of a borrowable thing.',
+  description: 'Download a doc of a borrowable thing.',
 
 
   inputs: {
 
     id: {
-      description: 'The id of the item whose photo we\'re downloading.',
+      description: 'The id of the item whose doc we\'re downloading.',
       type: 'number',
       required: true
     }
@@ -21,7 +21,7 @@ module.exports = {
   exits: {
 
     success: {
-      outputDescription: 'The streaming bytes of the specified thing\'s photo.',
+      outputDescription: 'The streaming bytes of the specified thing\'s doc.',
       outputType: 'ref'
     },
 

@@ -21,16 +21,7 @@ module.exports = {
     var url = require('url');
 
     // Get the list of things this user can see.
-    var things = await Thing.find({
-      or: [
-        // Friend things:
-        { owner: { 'in': _.pluck(this.req.me.friends, 'id') } },
-        // My things:
-        { owner: this.req.me.id }
-      ]
-    })
-    .populate('owner')
-    .populate('borrowedBy');
+    var things = await Thing.find();
 
     _.each(things, (thing)=> {
       thing.imageSrc = url.resolve(sails.config.custom.baseUrl, '/api/v1/things/'+thing.id+'/photo');
