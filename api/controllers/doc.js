@@ -11,7 +11,7 @@ module.exports = {
 
     id: {
       description: 'The id of the item whose doc we\'re downloading.',
-      type: 'number',
+      type: 'string',
       required: true
     }
 
@@ -34,8 +34,13 @@ module.exports = {
 
   fn: async function ({id}) {
 
-    var thing = await Thing.findOne({id});
-    if (!thing) { throw 'notFound'; }
+    sails.log('ID', id);
+
+    var thing = await Thing.findOne({
+      'id': id
+    });
+
+    if (!thing) throw 'notFound';
 
     // Check permissions.
     // (So people can't see images of stuff that isn't from their friends or themselves.)
@@ -45,7 +50,6 @@ module.exports = {
     // }
 
     this.res.type(thing.imageUploadMime);
-
 
     var downloading = await sails.startDownload(thing.imageUploadFd);
 
