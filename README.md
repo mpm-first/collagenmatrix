@@ -1,9 +1,4 @@
-# Ration
-
-
-### Demo
-
-Try the app out at https://ration.io/
+# CollagenMatrix - Patient Portal
 
 
 ### Take the course

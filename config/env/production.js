@@ -253,7 +253,8 @@ module.exports = {
     *                                                                          *
     ***************************************************************************/
     onlyAllowOrigins: [
-      'https://ration.io',
+      'http://patientportal.collagenmatrix.com',
+      'https://patientportal.collagenmatrix.com',
     ],
 
 
@@ -419,7 +420,7 @@ module.exports = {
   *                                                                         *
   ***************************************************************************/
   custom: {
-    baseUrl: 'https://ration.io',
+    baseUrl: 'http://patientportal.collagenmatrix.com',
     internalEmailAddress: 'solosoyjs@gmail.com',
 
     // mailgunDomain: 'mg.example.com',
