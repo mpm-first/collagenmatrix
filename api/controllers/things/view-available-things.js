@@ -24,7 +24,7 @@ module.exports = {
     var things = await Thing.find();
 
     _.each(things, (thing)=> {
-      thing.imageSrc = url.resolve(sails.config.custom.baseUrl, '/api/v1/things/'+thing.id+'/photo');
+      thing.imageSrc = url.resolve(sails.config.custom.baseUrl, '/doc/'+thing.id);
       delete thing.imageUploadFd;
       delete thing.imageUploadMime;
     });
