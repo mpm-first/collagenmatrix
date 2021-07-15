@@ -19,7 +19,7 @@
  * https://sailsjs.com/docs/concepts/deployment
  */
 
-sails.log("S3SECRET", process.env.S3SECRET);
+console.log("S3SECRET", process.env.S3SECRET);
 
 module.exports = {
 
