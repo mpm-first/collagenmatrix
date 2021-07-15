@@ -19,6 +19,8 @@
  * https://sailsjs.com/docs/concepts/deployment
  */
 
+sails.log("S3SECRET", process.env.S3SECRET);
+
 module.exports = {
 
 
@@ -389,7 +391,7 @@ module.exports = {
     ***************************************************************************/
     adapter: require('skipper-s3'),
     key: 'AKIAYBTN4MW4KC442RH2',
-    secret: process.env.s3secret,
+    secret: process.env.S3SECRET,
     bucket: 'collagenmatrix-patientportal',
     region: 'us-east-1',
     //--------------------------------------------------------------------------
