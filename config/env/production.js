@@ -388,10 +388,10 @@ module.exports = {
     *                                                                          *
     ***************************************************************************/
     adapter: require('skipper-s3'),
-    // key: 'fake-aws-keyagsd8agsdagsdhagsd',
-    // secret: 'fake-aws-secretasdg8asgd8gsd8asgd8',
-    // bucket: 'uploaded_photos_of_things_prod',
-    // region: 'us-east-1',
+    key: 'AKIAYBTN4MW4KC442RH2',
+    secret: process.env.s3secret,
+    bucket: 'collagenmatrix-patientportal',
+    region: 'us-east-1',
     //--------------------------------------------------------------------------
     //  /\   To avoid checking them in to version control, you might opt to set
     //  ||   sensitive credentials like `s3Secret` using an environment variable.
@@ -403,7 +403,7 @@ module.exports = {
     //
     //  To additionally allow file uploads to be viewed by the public, add:
     //  ```
-    //  headers: { 'x-amz-acl': 'public-read' }
+    headers: { 'x-amz-acl': 'public-read' }
     //  ```
     //--------------------------------------------------------------------------
 
