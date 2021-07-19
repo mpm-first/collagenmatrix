@@ -34,7 +34,7 @@ module.exports.datastores = {
 
   default: {
     adapter: 'sails-mongo',
-    url: 'mongodb://localhost:27017/collagenmatrix',
+    url: 'mongodb://ChrisAdmin:'+process.env.MONGOPW+'@localhost:27017/collagenmatrix',
 
     /***************************************************************************
     *                                                                          *

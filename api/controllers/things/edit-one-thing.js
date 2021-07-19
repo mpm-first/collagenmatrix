@@ -50,8 +50,6 @@ module.exports = {
 
   fn: async function ({id, photo, label, ref}) {
 
-    console.log(arguments);
-
     var thingToUpdate = await Thing.findOne({ id });
 
     // Ensure the thing still exists.
@@ -60,17 +58,19 @@ module.exports = {
     var url = require('url');
     var util = require('util');
 
-    // Upload the image.
-    var info = await sails.uploadOne(photo, {
-      maxBytes: 3000000
-    })
-    // Note: E_EXCEEDS_UPLOAD_LIMIT is the error code for exceeding
-    // `maxBytes` for both skipper-disk and skipper-s3.
-    .intercept('E_EXCEEDS_UPLOAD_LIMIT', 'tooBig')
-    .intercept((err)=>new Error('The photo upload failed: '+util.inspect(err)));
+    if (photo) {
+      // Upload the image.
+      var info = await sails.uploadOne(photo, {
+        maxBytes: 3000000
+      })
+      // Note: E_EXCEEDS_UPLOAD_LIMIT is the error code for exceeding
+      // `maxBytes` for both skipper-disk and skipper-s3.
+      .intercept('E_EXCEEDS_UPLOAD_LIMIT', 'tooBig')
+      .intercept((err)=>new Error('The photo upload failed: '+util.inspect(err)));
 
-    if(!info) {
-      throw 'noFileAttached';
+      if(!info) {
+        throw 'noFileAttached';
+      }
     }
 
     var imageSrc = url.resolve(sails.config.custom.baseUrl, '/doc/'+thingToUpdate.id);

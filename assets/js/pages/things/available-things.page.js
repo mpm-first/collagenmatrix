@@ -105,7 +105,7 @@ parasails.registerPage('available-things', {
       // Close modal
       this.goto('/things');
       // Reset form data
-      this.uploadFormData = {
+      this.editFormData = {
         id: '',
         photo: undefined,
         label: '',
@@ -189,18 +189,46 @@ parasails.registerPage('available-things', {
     },
 
     submittedEditThingForm: function(result) {
-      var newItem = _.extend(result, {
-        label: this.uploadFormData.label,
-        ref: this.uploadFormData.ref,
-        isBorrowed: false,
-        owner: {
-          id: this.me.id,
-          fullName: this.me.fullName
-        }
-      });
+      // var newItem = _.extend(result, {
+      //   label: this.uploadFormData.label,
+      //   ref: this.uploadFormData.ref,
+      //   isBorrowed: false,
+      //   owner: {
+      //     id: this.me.id,
+      //     fullName: this.me.fullName
+      //   }
+      // });
 
       // Close the modal.
       this._clearEditThingModal();
+    },
+
+    editFileInput: function(files) {
+      if (files.length !== 1 && !this.editFormData.photo) {
+        throw new Error('Consistency violation: `changeFileInput` was somehow called with an empty array of files, or with more than one file in the array!  This should never happen unless there is already an uploaded file tracked.');
+      }
+      var selectedFile = files[0];
+
+      // If you cancel from the native upload window when you already
+      // have a photo tracked, then we just avast (return early).
+      // In this case, we just leave whatever you had there before.
+      if (!selectedFile && this.editFormData.photo) {
+        return;
+      }
+
+      this.editFormData.photo = selectedFile;
+
+      // Set up the file preview for the UI:
+      var reader = new FileReader();
+      reader.onload = (event)=>{
+        this.editFormData.previewImageSrc = event.target.result;
+
+        // Unbind this "onload" event.
+        delete reader.onload;
+      };
+      // Clear out any error messages about not providing an image.
+      this.formErrors.photo = false;
+      reader.readAsDataURL(selectedFile);
     },
 
     changeFileInput: function(files) {

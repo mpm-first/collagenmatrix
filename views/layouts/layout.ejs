@@ -58,12 +58,15 @@
           <img height="30" alt="Collagen Matrix logo" src="/images/logo.png"/>
         </a>
         <div class="navbar-nav flex-row">
+
           <!-- LOGGED-IN NAVIGATION -->
+
           <% if(me) { %>
-<!--           <a class="nav-item nav-link text-dark ml-2 mr-2 <%= typeof currentSection !== 'undefined' && currentSection === 'friends' ? 'current' : ''%>"
-              href="/friends">Friends</a> -->
-          <a class="nav-item nav-link text-dark ml-2 mr-2 <%= typeof currentSection !== 'undefined' && currentSection === 'things' ? 'current' : ''%>"
-            href="/things">Documents</a>
+          <a href="/things" class="nav-item nav-link text-dark ml-2 mr-2 <%= typeof currentSection !== 'undefined' && currentSection === 'things' ? 'current' : ''%>">Documents</a>
+          <% if(me.isSuperAdmin) {%>
+          <a href="/users" class="nav-item nav-link text-dark ml-2 mr-2 <%= typeof currentSection !== 'undefined' && currentSection === 'users' ? 'current' : ''%>">Users</a>
+          <% } %>
+          
           <!-- Only in desktop nav -->
           <div class="nav-item dropdown d-none d-md-block">
             <a class="nav-link dropdown-toggle text-dark ml-2 <%= typeof currentSection !== 'undefined' && currentSection === 'contact' ? 'current' : ''%>" id="header-account-menu-link" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Account</a>
@@ -78,12 +81,6 @@
           <% } else { %>
           <!-- LOGGED-OUT NAVIGATION -->
           <a class="nav-item nav-link ml-2 mr-2" href="/login">Log in</a>
-          <!-- Only in desktop nav -->
-<!--           <div class="form-inline d-none ml-2 d-md-block" >
-            <a class="btn btn-outline-info" href="/signup">Sign up</a>
-          </div> -->
-          <!-- Only in mobile nav -->
-          <!-- <a class="nav-item nav-link text-info ml-2 d-block d-md-none" href="/signup">Sign up</a> -->
           <% } %>
         </div>
       </header>

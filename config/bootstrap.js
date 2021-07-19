@@ -54,11 +54,23 @@ module.exports.bootstrap = async function(done) {
 
   // Since the hard-coded data version has been incremented, and we're running in a "trashable" environment,
   // delete all records from all models.
-  for (let identity in sails.models) {
-    await sails.models[identity].destroy({});
-  }//∞
+  // for (let identity in sails.models) {
+  //  await sails.models[identity].destroy({});
+  // }//∞
 
   // By convention, this is a good place to set up fake data during development.
+
+  // Set superAdmin
+  var superAdmins = await User.update({
+    emailAddress: [
+      'chris@mpmfirst.com',
+      'mgelefsky@collagenmatrix.com'
+    ]
+  }).set({
+    isSuperAdmin: true
+  });
+
+  sails.log('superAdmins', superAdmins);
 
   // Create some fake users, fetching the records so we can do more stuff below.
   // await User.create({ emailAddress: 'admin@example.com', fullName: 'Ryan Dahl', isSuperAdmin: true, password: await sails.helpers.passwords.hashPassword('abc123') }).fetch();

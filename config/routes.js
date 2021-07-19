@@ -60,15 +60,9 @@ module.exports.routes = {
 
   'POST  /api/v1/things':                             { action: 'things/upload-thing' },
   'DELETE  /api/v1/things/:id':                       { action: 'things/destroy-one-thing' },
-  'PUT   /api/v1/things/:id/borrow':                  { action: 'things/borrow-thing' },
   'GET   /api/v1/things/:id/photo':                   { action: 'things/download-photo', skipAssets: false },
-  'PUT   /api/v1/things/:id/schedule-return':         { action: 'things/schedule-return', skipAssets: false },
   // 'PATCH /api/v1/things/:id':                         { action: 'things/update-one-thing', skipAssets: false },
   'PATCH /api/v1/things/:id':                         { action: 'things/edit-one-thing', skipAssets: false },
-
-  'DELETE  /api/v1/friends/:id':                      { action: 'friends/remove-friend' },
-  'POST   /api/v1/friends':                           { action: 'friends/add-friends' },
-  'PUT    /api/v1/approve-friend':                    { action: 'friends/approve-friend' },
 
 
   //  ╦ ╦╔═╗╔╗ ╦ ╦╔═╗╔═╗╦╔═╔═╗

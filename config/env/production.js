@@ -19,7 +19,7 @@
  * https://sailsjs.com/docs/concepts/deployment
  */
 
-console.log("S3SECRET", process.env.S3SECRET);
+// console.log("S3SECRET", process.env.S3SECRET);
 
 module.exports = {
 
@@ -50,7 +50,7 @@ module.exports = {
     ***************************************************************************/
     default: {
       adapter: 'sails-mongo',
-      url: 'mongodb://localhost:27017/collagenmatrix',
+      url: 'mongodb://ChrisAdmin:'+process.env.MONGOPW+'@localhost:27017/collagenmatrix',
       // adapter: 'sails-mysql',
       // url: 'mysql://user:password@host:port/database',
       //--------------------------------------------------------------------------
