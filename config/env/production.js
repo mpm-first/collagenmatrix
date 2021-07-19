@@ -23,6 +23,7 @@ console.log("S3SECRET", process.env.S3SECRET);
 console.log("MONGOPW", process.env.MONGOPW);
 
 var mongourl = 'mongodb://AdminChris:' + process.env.MONGOPW + '@localhost:27017/collagenmatrix';
+console.log('mongourl', mongourl);
 
 module.exports = {
 
