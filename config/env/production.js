@@ -190,7 +190,7 @@ module.exports = {
     *                                                                          *
     ***************************************************************************/
     adapter: '@sailshq/connect-redis',
-    url: 'redis://admin:' + process.env.REDISPW + '@localhost:6379/sessions',
+    // url: 'redis://admin:' + process.env.REDISPW + '@localhost:6379/sessions',
     // url: 'redis://user:password@localhost:6379/dbname',
     //--------------------------------------------------------------------------
     // /\   OR, to avoid checking it in to version control, you might opt to
