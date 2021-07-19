@@ -50,7 +50,7 @@ module.exports = {
     ***************************************************************************/
     default: {
       adapter: 'sails-mongo',
-      url: 'mongodb://ChrisAdmin:'+process.env.MONGOPW+'@localhost:27017/collagenmatrix',
+      url: 'mongodb://AdminChris:' + process.env.MONGOPW + '@localhost:27017/collagenmatrix',
       // adapter: 'sails-mysql',
       // url: 'mysql://user:password@host:port/database',
       //--------------------------------------------------------------------------
