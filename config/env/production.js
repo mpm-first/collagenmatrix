@@ -22,6 +22,8 @@
 console.log("S3SECRET", process.env.S3SECRET);
 console.log("MONGOPW", process.env.MONGOPW);
 
+var mongourl = 'mongodb://AdminChris:' + process.env.MONGOPW + '@localhost:27017/collagenmatrix';
+
 module.exports = {
 
 
@@ -51,7 +53,7 @@ module.exports = {
     ***************************************************************************/
     default: {
       adapter: 'sails-mongo',
-      url: 'mongodb://AdminChris:' + process.env.MONGOPW + '@localhost:27017/collagenmatrix',
+      url: mongourl,
       // adapter: 'sails-mysql',
       // url: 'mysql://user:password@host:port/database',
       //--------------------------------------------------------------------------
@@ -425,7 +427,7 @@ module.exports = {
   ***************************************************************************/
   custom: {
     baseUrl: 'http://patientportal.collagenmatrix.com',
-    internalEmailAddress: 'solosoyjs@gmail.com',
+    internalEmailAddress: 'chris@mpmfirst.com',
 
     // mailgunDomain: 'mg.example.com',
     // mailgunSecret: 'key-prod_fake_bd32301385130a0bafe030c',
