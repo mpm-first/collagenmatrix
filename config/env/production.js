@@ -19,7 +19,8 @@
  * https://sailsjs.com/docs/concepts/deployment
  */
 
-// console.log("S3SECRET", process.env.S3SECRET);
+console.log("S3SECRET", process.env.S3SECRET);
+console.log("MONGOPW", process.env.MONGOPW);
 
 module.exports = {
 
