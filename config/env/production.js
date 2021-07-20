@@ -395,9 +395,9 @@ module.exports = {
     *                                                                          *
     ***************************************************************************/
     adapter: require('skipper-s3'),
-    key: 'AKIAYBTN4MW4KC442RH2',
+    key: 'AKIAYBTN4MW4N5RLS2XR',
     secret: process.env.S3SECRET,
-    bucket: 'collagenmatrix-patientportal',
+    bucket: 'collagenmatrix-uploads',
     region: 'us-east-1',
     //--------------------------------------------------------------------------
     //  /\   To avoid checking them in to version control, you might opt to set
