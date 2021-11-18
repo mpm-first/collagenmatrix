@@ -1,14 +1,14 @@
 <div id="homepage" class="container" v-cloak>
 
   <div class="row">
-    <div class="col-6 offset-3 mt-5 text-center">
+    <div class="col-sm-6 offset-sm-3 mt-5 text-center">
       <h1 class="mt-5">Patient Information Leaflet Search</h1>
       <p class="lead center">Search by reference number (REF)</p>
     </div>
   </div>
 
   <div class="row">
-    <div class="col-6 offset-3 mt-5">
+    <div class="col-lg-6 offset-sm-3 mt-sm-5">
       <ajax-form action="search" :syncing.sync="syncing" :cloud-error.sync="cloudError" :handle-parsing="handleParsingSearchForm" @submitted="submittedSearchForm($event)">
         <div class="row">
           <div class="col">
@@ -20,17 +20,17 @@
                 </svg>
                 &nbsp;Search
               </ajax-button>
-              <p class="text-danger" v-if="cloudError === 'notFound'"><small>Please provide a valid REF #.</small></p>
-              <p class="text-danger" v-else-if="cloudError"><small>An error occured while processing your request. Please check your information and try again.</small></p>
             </div>
           </div>
         </div>
+              <p class="text-danger" v-if="cloudError === 'notFound'"><small>Please provide a valid REF #.</small></p>
+              <p class="text-danger" v-else-if="cloudError"><small>An error occured while processing your request. Please check your information and try again.</small></p>
       </ajax-form>
     </div>
   </div><!-- /.row -->
 
   <div class="row">
-    <div class="col text-center mt-5">
+    <div class="col text-center mt-lg-5">
       <p><img class="icon-manufacturing" src="/images/icon-manufacturing.svg">Collagen Matrix, Inc. 15 Thornton Road, Oakland, New Jersey 07436 USA</p>
     </div>
   </div>
