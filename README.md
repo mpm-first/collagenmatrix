@@ -1,11 +1,16 @@
 # CollagenMatrix - Patient Portal
 
+### Getting started
+- Clone this repo and cd into directory
+- `npm install`
+- `npm install -g sails`
+- `npm install -g grunt-cli`
+- Install ruby & sass [via Homebrew](https://www.ruby-lang.org/en/documentation/installation/#homebrew)
+- Install mongodb [via Homebrew](https://docs.mongodb.com/manual/tutorial/install-mongodb-on-os-x/#std-label-brew-installs-dbtools)
 
-### Take the course
-
-Take the complete tutorial course showing how to build Ration at https://courses.platzi.com/classes/sails-js/
-
-a [Sails v1](https://sailsjs.com) application
+### Basic Commands
+- `sails lift`
+- `sails lift --production --verbose`
 
 ### Version info
 
