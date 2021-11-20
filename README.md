@@ -6,7 +6,14 @@
 - `npm install -g sails`
 - `npm install -g grunt-cli`
 - Install ruby & sass [via Homebrew](https://www.ruby-lang.org/en/documentation/installation/#homebrew)
+```
+brew install sass/sass/sass
+```
 - Install mongodb [via Homebrew](https://docs.mongodb.com/manual/tutorial/install-mongodb-on-os-x/#std-label-brew-installs-dbtools)
+```
+brew tap mongodb/brew
+brew services start mongodb-community
+```
 
 ### Basic Commands
 - `sails lift`
