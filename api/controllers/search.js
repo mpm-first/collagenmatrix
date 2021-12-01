@@ -36,19 +36,19 @@ module.exports = {
 
 
   fn: async function ({ref}) {
-
-    var thing = await Thing.findOne({
+    const sanitizedRef = ref.toUpperCase();
+    var refDoc = await Thing.findOne({
       ref: {
-        contains: ref
+        contains: sanitizedRef
       }
     });
 
-    if (!thing) throw 'notFound';
+    if (!refDoc) {throw 'notFound';}
 
     var url = require('url');
     var util = require('util');
 
-    var imageSrc = url.resolve(sails.config.custom.baseUrl, 'doc/'+thing.id);
+    var imageSrc = url.resolve(sails.config.custom.baseUrl, 'doc/'+refDoc.id);
 
     return imageSrc;
   }
